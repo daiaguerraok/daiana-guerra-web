@@ -20,6 +20,49 @@ if(planGrid){
     planBase.map(i=>'<li>'+i+'</li>').join('')+'</ul>';
   planGrid.after(base);
 }
+// ── Sesiones de fotografía ───────────────────────────────────────────
+// Una sola lista arma las carpetas de fotografia.html y la página de cada
+// sesión (sesion.html?s=slug). Para sumar una sesión: un objeto acá, la
+// portada en fotos/ (1080 × 1440, vertical) y sus fotos (1000 × 1250). `titulo`
+// es opcional y admite HTML, para poner una palabra en cursiva.
+const fotosProvisionales=Array.from({length:9},(_,i)=>`fotos/foto-0${i+1}.jpg`);
+const sesiones=[
+{slug:'cafe-nomade',nombre:'Café Nómade',titulo:'Café <em>Nómade.</em>',para:'Producto',anio:2025,portada:'fotos/sesion-01.jpg',
+ texto:'Fotos de producto para el lanzamiento de la carta de invierno: tazas, granos y detalle de barra, pensadas para el feed y para historias.',fotos:fotosProvisionales},
+{slug:'oreo-burger',nombre:'Oreo Burger',titulo:'Oreo <em>Burger.</em>',para:'Gastronomía',anio:2025,portada:'fotos/sesion-02.jpg',
+ texto:'Sesión gastronómica para el feed nuevo: hamburguesas, papas y la barra, con luz cálida y fondo oscuro para que el producto sea el protagonista.',fotos:fotosProvisionales},
+{slug:'editorial-primavera',nombre:'Editorial de primavera',titulo:'Editorial de <em style="--sangria:.148em">primavera.</em>',para:'Retrato',anio:2024,portada:'fotos/sesion-03.jpg',
+ texto:'Retratos en exterior para una marca de indumentaria: luz natural, movimiento y planos que muestran la prenda sin perder a la persona.',fotos:fotosProvisionales},
+{slug:'casa-rambla',nombre:'Casa Rambla',titulo:'Casa <em>Rambla.</em>',para:'Espacio',anio:2024,portada:'fotos/sesion-04.jpg',
+ texto:'Interiores y detalle para un alojamiento frente al mar: ambientes amplios, texturas y la luz de la tarde entrando por las ventanas.',fotos:fotosProvisionales},
+{slug:'lanzamiento-lua',nombre:'Lanzamiento Lúa',titulo:'Lanzamiento <em>Lúa.</em>',para:'Marca',anio:2025,portada:'fotos/sesion-05.jpg',
+ texto:'Imágenes de marca para el lanzamiento: producto, packaging y escenas de uso, con una paleta definida para sostener la identidad en redes.',fotos:fotosProvisionales},
+{slug:'feria-de-ideas',nombre:'Feria de ideas',titulo:'Feria de <em>ideas.</em>',para:'Evento',anio:2023,portada:'fotos/sesion-06.jpg',
+ texto:'Cobertura de un evento de emprendedores: stands, charlas y gente, con foco en los momentos que después sirven para contar el evento en redes.',fotos:fotosProvisionales},
+];
+const folders=document.querySelector('#folders');
+if(folders) folders.innerHTML=sesiones.map((s,i)=>`<li data-rise="${52-i*3}"><a class="folder" href="sesion.html?s=${s.slug}" aria-label="${s.nombre}: ${s.para}, ${s.anio}">
+<span class="folder-tab"><span>${s.para.toUpperCase()}</span><i aria-hidden="true">${s.anio}</i></span>
+<span class="folder-body"><span class="folder-shadow" aria-hidden="true"></span><span class="folder-cover"><img src="${s.portada}" alt="" width="1080" height="1440" loading="${i<3?'eager':'lazy'}" decoding="async"${i<3?' fetchpriority="high"':''}><span class="folder-sheen" aria-hidden="true"></span></span></span>
+<span class="folder-meta"><strong>${s.nombre}</strong><span>${s.fotos.length} FOTOS</span></span></a></li>`).join('');
+const sessionHead=document.querySelector('#session-head');
+if(sessionHead){
+  const slug=new URLSearchParams(location.search).get('s');
+  const s=sesiones.find(x=>x.slug===slug);
+  if(s){
+    document.title=`${s.nombre} — ${s.para} — dg.creando`;
+    sessionHead.innerHTML=`<a class="back-link" href="fotografia.html">← VOLVER A FOTOGRAFÍA</a>
+<p class="section-label">SESIÓN / ${s.para.toUpperCase()} · ${s.anio}</p>
+<h1>${s.titulo||s.nombre}</h1>
+<p class="page-lead">${s.texto}</p>
+<dl class="case-facts"><div><dt>PARA</dt><dd>${s.para}</dd></div><div><dt>AÑO</dt><dd>${s.anio}</dd></div><div><dt>FOTOS</dt><dd>${s.fotos.length}</dd></div></dl>`;
+    document.querySelector('#session-gallery').innerHTML=s.fotos.map((f,i)=>`<figure data-rise="52"><img src="${f}" alt="${s.nombre}, foto ${i+1}" width="1000" height="1250" loading="${i<3?'eager':'lazy'}" decoding="async"></figure>`).join('');
+  }else{
+    sessionHead.innerHTML=`<a class="back-link" href="fotografia.html">← VOLVER A FOTOGRAFÍA</a><p class="section-label">FOTOGRAFÍA</p><h1>Esa sesión <em>no está.</em></h1><p class="no-session">Elegí una desde la página de fotografía.</p>`;
+    document.querySelector('.session-section')?.remove();
+  }
+}
+
 document.querySelectorAll('#year').forEach(el=>el.textContent=new Date().getFullYear());
 document.querySelectorAll('a[href="#contacto"]').forEach(a=>{
   // Navigation scrolls to the form; explicit WhatsApp actions open the conversation.
@@ -78,6 +121,31 @@ addEventListener('resize',()=>{measure();requestAnimationFrame(render);},{passiv
 addEventListener('load',()=>{measure();render();});
 measure();
 addEventListener('scroll',()=>{if(!scheduled){requestAnimationFrame(render);scheduled=true}},{passive:true});
+// ── Carpetas: inclinación hacia el cursor ────────────────────────────
+// Solo con mouse. La posición del puntero se guarda en cada evento y se
+// aplica una vez por cuadro; el CSS hace el resto con variables.
+if(!reduced.matches&&matchMedia('(hover:hover) and (pointer:fine)').matches){
+  document.querySelectorAll('.folder').forEach(carpeta=>{
+    let px=0,py=0,pedido=0;
+    const aplicar=()=>{
+      pedido=0;
+      const r=carpeta.parentElement.getBoundingClientRect();   // el <li> no rota: su caja es fiel
+      const x=Math.min(1,Math.max(0,(px-r.left)/r.width)), y=Math.min(1,Math.max(0,(py-r.top)/r.height));
+      carpeta.style.setProperty('--rx',((x-.5)*2).toFixed(3));
+      carpeta.style.setProperty('--ry',((y-.5)*2).toFixed(3));
+      carpeta.style.setProperty('--mx',(x*100).toFixed(1)+'%');
+      carpeta.style.setProperty('--my',(y*100).toFixed(1)+'%');
+    };
+    carpeta.addEventListener('pointerenter',()=>carpeta.classList.add('moviendo'));
+    carpeta.addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;if(!pedido)pedido=requestAnimationFrame(aplicar);});
+    carpeta.addEventListener('pointerleave',()=>{
+      if(pedido){cancelAnimationFrame(pedido);pedido=0;}
+      carpeta.classList.remove('moviendo');
+      carpeta.style.setProperty('--rx','0');carpeta.style.setProperty('--ry','0');
+    });
+  });
+}
+
 document.querySelector('#contact-form')?.addEventListener('submit',event=>{event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;const name=form.elements.name.value.trim(),brand=form.elements.brand.value.trim(),message=form.elements.message.value.trim();if(!name||!message){document.querySelector('#form-note').textContent='Completá tu nombre y tu mensaje para continuar.';return;}const text=`Hola Daiana, soy ${name}.${brand?` Mi marca es ${brand}.`:''}\n\n${message}`;window.open(whatsappURL(text),'_blank','noopener,noreferrer');document.querySelector('#form-note').textContent='Tu consulta está preparada. Enviála desde WhatsApp para completar el contacto.';});
 // One-time entrances: headings soften into focus, only short labels type in.
 const headingElements=document.querySelectorAll('h1,h2,.about-copy p');const labels=document.querySelectorAll('.eyebrow,.section-label');
@@ -150,14 +218,20 @@ if(phoneSlot&&hasWebGL()){
   if(reduced.matches) return;                            // respeta la preferencia del sistema
   if(!matchMedia('(pointer: fine)').matches) return;     // en touch el scroll nativo ya tiene inercia
   const doc=document.documentElement;
-  let target=scrollY, current=scrollY, running=false;
+  let target=scrollY, current=scrollY, running=false, lastSet=scrollY;
   const maxY=()=>doc.scrollHeight-innerHeight;
   const clamp=v=>Math.max(0,Math.min(maxY(),v));
+  function detener(){ running=false; target=current=lastSet=scrollY; }
   function frame(){
+    // Si el scroll se movió por fuera de nosotros (la barra, el teclado, un
+    // buscar-en-página), el usuario manda: soltamos la inercia en vez de
+    // arrastrarlo de vuelta a nuestro destino.
+    if(Math.abs(scrollY-lastSet)>2){ detener(); return; }
     current+=(target-current)*0.11;
     if(Math.abs(target-current)<0.4){current=target;running=false;}
     // 'instant' es imprescindible: el CSS tiene scroll-behavior:smooth y si no
     // cada llamada reinicia una animación nativa que cancela a la anterior.
+    lastSet=current;
     scrollTo({top:current,left:0,behavior:'instant'});
     if(running) requestAnimationFrame(frame);
   }
@@ -168,7 +242,13 @@ if(phoneSlot&&hasWebGL()){
     if(event.target.closest && event.target.closest('textarea')) return; // scroll propio del campo
     event.preventDefault();
     const paso=event.deltaMode===1?16:(event.deltaMode===2?innerHeight:1);
-    target=clamp(target+event.deltaY*paso);
+    // El trackpad manda decenas de eventos con su propia inercia. Si se suman
+    // todos, la nuestra se encima y te dispara media página de más. Limitamos
+    // cada golpe y cuánto puede adelantarse el destino respecto de dónde
+    // estamos: la sensación se mantiene y deja de pasarse de largo.
+    const golpe=Math.max(-innerHeight,Math.min(innerHeight,event.deltaY*paso));
+    const techo=innerHeight*1.15;
+    target=clamp(Math.max(current-techo,Math.min(current+techo,target+golpe)));
     start();
   },{passive:false});
   // Los anclajes usan el mismo lerp: si no, la animación nativa y esta se
@@ -186,6 +266,78 @@ if(phoneSlot&&hasWebGL()){
     history.replaceState(null,'',href);
   });
   // Si el scroll lo mueve otra cosa (teclado, barra), sincronizamos.
-  addEventListener('scroll',()=>{ if(!running){target=current=scrollY;} },{passive:true});
+  addEventListener('scroll',()=>{ if(!running){target=current=lastSet=scrollY;} },{passive:true});
   addEventListener('resize',()=>{ target=clamp(target); },{passive:true});
+  // El alto del documento cambia cuando entran las imágenes diferidas: si el
+  // destino quedó fuera de rango, se corrige.
+  if(window.ResizeObserver) new ResizeObserver(()=>{ target=clamp(target); }).observe(document.body);
+  // Al arrastrar la barra o usar el teclado también soltamos la inercia.
+  addEventListener('pointerdown',()=>{ if(running) detener(); },{passive:true});
+  addEventListener('keydown',event=>{
+    if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key)&&running) detener();
+  },{passive:true});
+})();
+
+// ── Loader y transición entre páginas ────────────────────────────────
+// El velo ya está en el HTML, así que cubre desde el primer pintado. Acá
+// solo se lo saca cuando la página terminó, y se lo vuelve a traer al
+// navegar a otra página para que el corte no sea seco.
+(function(){
+  const velo=document.querySelector('#loader');
+  if(!velo) return;
+  const barra=velo.querySelector('.loader-bar i');
+  const suave=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let avance=0, listo=false;
+
+  const pintar=v=>{ avance=Math.max(avance,v); if(barra) barra.style.setProperty('--p',avance.toFixed(3)); };
+
+  // La barra avanza hacia 0.9 mientras carga y solo llega a 1 cuando
+  // terminó de verdad: el final es real, no simulado.
+  const t0=performance.now();
+  (function ramp(){
+    if(listo) return;
+    const t=(performance.now()-t0)/1400;
+    pintar(Math.min(0.9,1-Math.pow(1-Math.min(1,t),2)*1));
+    requestAnimationFrame(ramp);
+  })();
+
+  function terminar(){
+    if(listo) return;
+    listo=true; pintar(1);
+    setTimeout(()=>{
+      document.body.classList.add('cargada');
+      setTimeout(()=>velo.classList.add('fuera'), suave?600:0);
+    }, suave?240:0);
+  }
+  if(document.readyState==='complete') terminar();
+  else addEventListener('load',terminar);
+  // Red de seguridad: si algo no carga, el velo no se queda para siempre.
+  setTimeout(terminar,4000);
+
+  // Volver con el botón atrás restaura la página desde caché: el velo
+  // tiene que estar afuera, no tapando todo.
+  addEventListener('pageshow',event=>{
+    if(event.persisted){
+      document.body.classList.remove('saliendo');
+      document.body.classList.add('cargada');
+      velo.classList.add('fuera');
+    }
+  });
+
+  // Transición de salida hacia otra página del sitio.
+  addEventListener('click',event=>{
+    if(event.metaKey||event.ctrlKey||event.shiftKey||event.button!==0) return;
+    const enlace=event.target.closest&&event.target.closest('a[href]');
+    if(!enlace||enlace.target==='_blank'||enlace.hasAttribute('download')) return;
+    const href=enlace.getAttribute('href');
+    if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')) return;
+    let destino;
+    try{ destino=new URL(href,location.href); }catch(_){ return; }
+    if(destino.origin!==location.origin) return;
+    if(destino.pathname===location.pathname) return;      // la misma página
+    event.preventDefault();
+    velo.classList.remove('fuera');
+    document.body.classList.add('saliendo');
+    setTimeout(()=>{ location.href=destino.href; }, suave?320:0);
+  });
 })();
