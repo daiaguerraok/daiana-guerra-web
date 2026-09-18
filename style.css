@@ -6,3 +6,320 @@
 @media(min-width:1600px){.contact-footer{max-width:1600px;margin:auto}}@media(max-width:1100px){.plan-grid{grid-template-columns:repeat(2,1fr)}.plan-description{min-height:55px}.contact-footer{gap:40px}.plan li{font-size:14px}}@media(max-width:700px){header{padding:24px 6%;top:0;left:0;width:100%;transition:transform .35s}header .logo{font-size:22px}header .logo span{font-size:8px}.nav-contact{display:none}.menu-toggle{display:flex;flex-direction:column;justify-content:center;gap:7px;background:none;color:white;border:0;z-index:12;padding:12px;width:48px;height:48px;cursor:pointer}.menu-toggle span{display:block;width:25px;height:1px;background:currentColor;transition:transform .3s}header nav{display:none}header.menu-open{mix-blend-mode:normal;background:#090909;height:100dvh;align-items:flex-start}header.menu-open nav{display:flex;flex-direction:column;justify-content:center;position:absolute;inset:100px 6% 55px;gap:12px}header.menu-open nav a{display:block;padding:12px 0;font-size:clamp(26px,7vw,42px);letter-spacing:-1px}header.menu-open .mobile-contact{display:block}header.menu-open .menu-toggle span:first-child{transform:translateY(4px) rotate(45deg)}header.menu-open .menu-toggle span:last-child{transform:translateY(-4px) rotate(-45deg)}body.menu-open{overflow:hidden}nav a:first-child{display:block}.hero{padding-top:150px}h1{font-size:clamp(42px,10.4vw,65px);line-height:1.2;letter-spacing:-2.3px}h1 em{font-size:1.16em}h2{font-size:clamp(34px,8vw,48px);letter-spacing:-1.5px;line-height:1.3}.hero-art{height:430px}.carousel-group{gap:16px;padding-right:16px}.visual{width:220px;height:270px}.visual strong{font-size:32px}.visual span,.visual small{font-size:8px}.photo-slot>span{font-size:62px}.phone-word em{font-size:54px}.contact-footer{grid-template-columns:1fr;padding:75px 6% 30px;gap:45px}.contact-heading h2{font-size:clamp(50px,12vw,72px)}.contact-heading .muted{max-width:none}.social-links{margin-top:30px}.footer-bottom{margin-top:0;flex-wrap:wrap}.footer-bottom .logo{width:100%}.contact-footer form{padding-top:0}.plan-grid{grid-template-columns:1fr}.plan{padding:30px}.plan-description{min-height:0;font-size:15px}.plan .button{font-size:14px}.plan li{font-size:14px}.plan-top{margin-bottom:25px}.hero-bottom{font-size:8px}}@media(prefers-reduced-motion:reduce){.carousel-track{animation:none}.blur-enter{opacity:1;filter:none;transform:none;transition:none}.type-content{visibility:visible!important;animation:none!important}.type-enter:after{display:none!important}.button,.button:before,.button span,.plan,nav a:before,.nav-contact:before,.menu-toggle span{transition:none}.plan:hover,.button:hover{transform:none}}
 .type-enter{position:relative}.type-reserve{display:block;visibility:hidden}.type-content{position:absolute;left:0;top:0;right:0;visibility:visible!important;animation:none!important}.type-enter:after{display:none!important}.type-content:after{content:'';display:inline-block;background:#fff;width:7px;height:1em;vertical-align:-.08em;margin-left:5px;animation:cursor-blink .6s steps(1,end) infinite}.type-enter:not(.entered) .type-content:after,.type-enter.typed .type-content:after{display:none}@media(max-width:700px){.contact-heading h2{font-size:clamp(39px,10.5vw,62px)}}@media(prefers-reduced-motion:reduce){.type-reserve{visibility:visible}.type-content{display:none}}
 .plan{cursor:pointer}.plan:focus-within{outline:2px solid #fff;outline-offset:5px}
+
+/* Teléfono 3D del hero. Mejora progresiva: aparece solo si el navegador
+   puede con WebGL; si no, queda el teléfono en CSS de arriba.
+   Sin pointer-events para no tapar nunca los botones del hero. */
+.phone-3d{display:none;position:relative;z-index:2;width:min(360px,100%);height:100%;pointer-events:none}
+.phone-3d canvas{display:block;width:100%;height:100%}
+.has-phone-3d .phone-3d{display:block}
+.has-phone-3d .phone{display:none}
+
+/* ── Portadas de los casos ────────────────────────────────────────────
+   Foto/collage difuminado de fondo + logo del caso al medio, en capas
+   separadas para poder animar el logo solo. */
+.project-art .cover-bg{width:100%;height:100%;object-fit:cover;display:block}
+.case-logo{position:absolute;inset:0;display:grid;place-items:center;z-index:2;pointer-events:none;padding:40px}
+.case-logo img{width:min(46%,420px);height:auto;display:block;
+  filter:drop-shadow(0 18px 40px rgba(0,0,0,.45));
+  transform:translateY(0);transition:transform .45s cubic-bezier(.22,.9,.3,1),filter .45s ease}
+.project:hover .case-logo img,.project:focus-within .case-logo img{
+  transform:translateY(-12px);filter:drop-shadow(0 30px 54px rgba(0,0,0,.55))}
+.project-bottom{background:linear-gradient(transparent,#0000006b)}
+@media(max-width:600px){
+  .case-logo{padding:24px}
+  .case-logo img{width:min(64%,300px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .case-logo img{transition:none}
+  .project:hover .case-logo img,.project:focus-within .case-logo img{transform:none}
+}
+/* El logo del header ahora es un SVG */
+.logo img{display:block;width:auto;height:26px}
+.footer-bottom .logo img{height:22px}
+@media(max-width:700px){.logo img{height:21px}}
+/* Las portadas ahora son fotos: el número va en blanco para que se lea
+   sobre cualquier imagen. */
+.project-number{color:#fff;text-shadow:0 1px 14px rgba(0,0,0,.6)}
+.project-bottom{background:linear-gradient(transparent,#00000085)}
+/* La portada ocupa toda la caja, sin depender del centrado flex heredado. */
+.project-art picture{position:absolute;inset:0;display:block}
+
+/* Velo detrás del logo del caso: lo despega del collage difuminado sin
+   tocar la imagen. Es un degradado radial, así que no deja borde visible. */
+.case-logo{position:absolute;inset:0;display:grid;place-items:center;z-index:2;pointer-events:none;padding:40px}
+.case-logo::before{content:"";position:absolute;left:50%;top:50%;translate:-50% -50%;
+  width:min(70%,760px);aspect-ratio:1.15;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(0,0,0,.62),rgba(0,0,0,.38) 55%,transparent 78%);
+  transition:opacity .45s ease}
+.case-logo img{position:relative;filter:drop-shadow(0 22px 42px rgba(0,0,0,.6)) drop-shadow(0 4px 12px rgba(0,0,0,.45))}
+.project:hover .case-logo img,.project:focus-within .case-logo img{
+  filter:drop-shadow(0 34px 56px rgba(0,0,0,.65)) drop-shadow(0 6px 16px rgba(0,0,0,.5))}
+/* Logo vertical (el de Oreo Burger): se limita por alto, no por ancho. */
+.case-logo img{width:auto;max-width:min(60%,420px);max-height:min(64%,330px)}
+@media(max-width:600px){
+  .case-logo img{max-width:min(72%,260px);max-height:46%}
+  .case-logo::before{width:min(86%,320px)}
+}
+/* Título y subtítulo del caso, legibles sobre foto. */
+.project-bottom h3{color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.65);margin:0}
+.project-bottom .tag{display:block;margin-top:7px;color:rgba(255,255,255,.8);text-shadow:0 1px 12px rgba(0,0,0,.6)}
+
+/* Centrado óptico del logo del caso.
+   Los logos no siempre tienen su centro visual en el medio del archivo: el
+   de Oreo Burger tiene orejas que sobresalen del círculo y agrandan la caja
+   por arriba, así que el círculo cae 10,3% más abajo de lo que parece.
+   El valor se midió sobre el render, no sobre el archivo: ajustar un círculo
+   al PNG da mal porque el naranja del pan y del contorno de las orejas
+   corren el resultado.
+   --logo-y corrige eso por caso, en % del alto del logo, y el velo de atrás
+   se mueve con él. El hover se suma aparte, sin pisar la corrección. */
+.case-logo{--logo-y:0%;--lift:0px}
+.case-logo img{transform:translateY(calc(var(--logo-y) + var(--lift)))}
+.case-logo::before{translate:-50% calc(-50% + var(--logo-y))}
+.project:hover .case-logo,.project:focus-within .case-logo{--lift:-12px}
+.project:hover .case-logo img,.project:focus-within .case-logo img{transform:translateY(calc(var(--logo-y) + var(--lift)))}
+@media(prefers-reduced-motion:reduce){
+  .project:hover .case-logo,.project:focus-within .case-logo{--lift:0px}
+}
+
+/* ══ Páginas internas (fotografía y casos) ══════════════════════════
+   Usan la MISMA escala que las secciones de la home: section-label, el
+   mismo h2 y el mismo ancho de columna. Antes tenían una escala propia
+   y por eso se sentían de otro sitio. */
+.page{padding:150px 7% 110px}
+.page-head{max-width:1376px;margin:0 auto}
+.page-head h1{font-size:clamp(36px,4.5vw,66px);line-height:1.15;letter-spacing:-2px;font-weight:400;margin:15px 0 0}
+.page-head h1 em{font-family:Vibes;font-style:normal;font-size:1.3em;letter-spacing:0}
+.page-lead{color:#929292;font-size:14px;max-width:48ch;margin:20px 0 0}
+.back-link{display:inline-block;color:#8f8d89;font-size:10px;letter-spacing:1.6px;text-decoration:none;margin-bottom:26px}
+.back-link:hover{color:#fff}
+.page-section{max-width:1376px;margin:0 auto;padding:105px 0 0}
+.page-section>h2{margin-top:15px}
+.page-note{color:#777;font-size:10px;letter-spacing:1.6px;margin:0 0 30px}
+@media(max-width:700px){.page{padding:118px 6% 80px}.page-section{padding-top:75px}}
+
+/* Galería: grilla uniforme de 3 columnas. Cierra siempre, sin huecos. */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+.gallery figure{margin:0;position:relative;overflow:hidden;border-radius:12px;background:#151517}
+.gallery img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.8,.3,1)}
+.gallery figure:hover img{transform:scale(1.04)}
+.gallery figcaption{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;
+  font-size:10px;letter-spacing:1.8px;color:#fff;
+  background:linear-gradient(transparent,#000000a6);opacity:0;transition:opacity .35s ease}
+.gallery figure:hover figcaption,.gallery figure:focus-within figcaption{opacity:1}
+@media(max-width:700px){
+  .gallery{grid-template-columns:repeat(2,1fr);gap:10px}
+  .gallery figcaption{opacity:1}
+}
+
+/* Caso: encabezado con el logo y ficha */
+.case-hero{display:flex;align-items:center;gap:36px;flex-wrap:wrap}
+.case-hero-logo{width:min(170px,32vw);flex-shrink:0}
+.case-hero-logo img{width:100%;height:auto;display:block;filter:drop-shadow(0 20px 40px rgba(0,0,0,.55))}
+.case-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:46px;
+  border-top:1px solid #ffffff1f;padding-top:24px}
+.case-facts dt{font-size:10px;letter-spacing:1.6px;color:#8f8d89}
+.case-facts dd{margin:7px 0 0;font-size:15px}
+
+/* Antes y después: dos feeds enfrentados */
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:10px}
+.ba-col>h3{font-size:10px;letter-spacing:2.2px;font-weight:500;margin:0 0 13px;color:#8f8d89}
+.ba-col.after>h3{color:#fff}
+.feed{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.feed img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#151517}
+.ba-col.before .feed{filter:saturate(.55) brightness(.82)}
+@media(max-width:760px){.ba{grid-template-columns:1fr;gap:40px}}
+
+/* Feed completo del caso */
+.feed-full{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.feed-full img{width:100%;aspect-ratio:1;object-fit:cover;display:block;border-radius:6px;background:#151517}
+@media(max-width:600px){.feed-full{gap:6px}}
+
+/* El título del caso en la home ahora es un link */
+.case-link{color:inherit;text-decoration:none}
+.case-link::after{content:"";position:absolute;inset:0;z-index:3}
+.project:hover .case-link{text-decoration:underline;text-underline-offset:5px}
+.project{cursor:pointer}
+
+/* La base común de los planes. Va destacada: es lo que toda clienta
+   recibe sí o sí, así que tiene el mismo peso visual que una tarjeta. */
+.plan-base{
+  margin:18px 0 0;padding:26px 30px;border-radius:16px;
+  border:1px solid #353535;background:#111;box-shadow:inset 0 1px 0 #ffffff0a;
+}
+.plan-base-label{
+  display:block;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;
+  color:#fff;font-weight:500;margin-bottom:18px;
+}
+.plan-base ul{
+  display:flex;flex-wrap:wrap;gap:13px 34px;list-style:none;margin:0;padding:0;
+}
+.plan-base li{
+  font-size:15px;color:#dcdcde;padding-left:20px;position:relative;letter-spacing:0;
+}
+.plan-base li:before{content:'✓';position:absolute;left:0;color:#8f8f95}
+@media(max-width:820px){
+  .plan-base{gap:20px;padding:24px;flex-direction:column;align-items:flex-start}
+  
+  .plan-base ul{gap:11px 26px}
+}
+@media(max-width:600px){
+  .plan-base ul{flex-direction:column;gap:11px}
+  .plan-base li{font-size:14px}
+}
+/* La descripción solo reserva lo que de verdad ocupa el texto más largo,
+   así las tarjetas cortas dejan de tener un hueco muerto. */
+.plan-description{min-height:76px}
+@media(max-width:1000px){.plan-description{min-height:55px}}
+@media(max-width:700px){.plan-description{min-height:0}.plan-base{font-size:11px;line-height:2}}
+
+/* ── Redes: vidrio transparente sobre negro ─────────────────────────
+   Sin tinte de color y sin brillo de burbuja: solo una capa translúcida
+   muy tenue, blur real y un borde de 1px que se ilumina arriba. */
+.social-links{display:flex;gap:12px;align-items:center}
+.social{
+  width:50px;height:50px;flex:0 0 50px;border-radius:50%;
+  display:grid;place-items:center;text-decoration:none;
+  color:rgba(255,255,255,.88);
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.13);
+  backdrop-filter:blur(18px) saturate(130%);-webkit-backdrop-filter:blur(18px) saturate(130%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 6px 20px rgba(0,0,0,.4);
+  transition:background .3s ease, border-color .3s ease, color .3s ease, transform .3s cubic-bezier(.22,.9,.3,1);
+}
+.social svg{width:21px;height:21px;display:block}
+/* Centrado óptico: la caja de cada glifo está centrada, pero su masa no.
+   Estos valores salen de medir el centroide de tinta de cada ícono. */
+.social[data-social="whatsapp"] svg{transform:translate(.32px,-.34px)}
+.social[data-social="facebook"] svg{transform:translate(-.35px,.15px)}
+.social:hover,.social:focus-visible{
+  transform:translateY(-3px);
+  color:#fff;
+  background:rgba(255,255,255,.1);
+  border-color:rgba(255,255,255,.26);
+}
+.social:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.social{transition:none}.social:hover{transform:none}}
+@media(max-width:600px){.social{width:46px;height:46px;flex-basis:46px}.social svg{width:19px;height:19px}}
+
+/* ── Nav: barrido más bajo y "Hablemos" como botón ─────────────────── */
+/* El rectángulo tomaba todo el alto del padding del link (unos 40px).
+   Lo achicamos sin tocar el área de click, que sigue igual de grande. */
+nav a:before{inset:7px 0}
+/* El contacto del nav se lee como botón: pastilla con borde, y el mismo
+   barrido de los demás links al pasar el mouse. */
+.nav-contact{border:1px solid currentColor;border-radius:60px;padding:8px 18px}
+.nav-contact:before{inset:0;border-radius:60px}
+/* En el menú mobile abierto los links son enormes: ahí el barrido
+   necesita su propia proporción. */
+header.menu-open nav a:before{inset:6px 0}
+header.menu-open .mobile-contact{border:0;border-radius:0;padding:12px 0}
+
+/* ── Redes: solo el ícono, sin círculo ──────────────────────────────
+   El círculo de vidrio combinaba backdrop-filter con una transición de
+   transform, y eso hace parpadear el repintado en Chrome. Sin fondo no
+   hay bug, y tampoco hay un contenedor del que el ícono pueda salirse. */
+.social-links{display:flex;gap:26px;align-items:center}
+.social{
+  width:auto;height:auto;flex:none;border:0;border-radius:0;padding:0;
+  background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
+  display:inline-flex;color:#fff;opacity:.82;
+  transition:opacity .25s ease, transform .25s cubic-bezier(.22,.9,.3,1);
+}
+.social svg{width:28px;height:28px;transform:none}
+.social:hover,.social:focus-visible{opacity:1;transform:translateY(-2px)}
+.social:focus-visible{outline:2px solid #fff;outline-offset:6px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){.social{transition:none}.social:hover{transform:none}}
+@media(max-width:600px){.social-links{gap:22px}.social svg{width:26px;height:26px}}
+
+/* ── El formulario, dentro de un recuadro ───────────────────────────
+   Antes flotaba sobre el fondo y no se veía dónde empezaba ni terminaba. */
+.contact-footer form{
+  padding:30px 32px 34px;border:1px solid #333;border-radius:16px;
+  background:#0e0e0f;box-shadow:inset 0 1px 0 #ffffff0a;
+}
+.contact-footer label:first-of-type{margin-top:0}
+@media(max-width:700px){.contact-footer form{padding:24px 22px 28px}}
+/* .social-links a traía border-bottom de cuando eran links de texto, y
+   por especificidad le ganaba a .social. */
+.social-links a.social{border:0;padding:0;text-decoration:none}
+
+/* ── El barrido del nav, sin deformación ────────────────────────────
+   Con scaleX el radio de la pastilla se aplasta y el relleno crece como
+   una lente. clip-path revela de izquierda a derecha sin tocar la forma. */
+nav a:before,.nav-contact:before{
+  transform:none;
+  clip-path:inset(0 100% 0 0);
+  transition:clip-path .4s cubic-bezier(.22,1,.36,1);
+  will-change:clip-path;
+}
+nav a:hover:before,nav a:focus-visible:before,
+.nav-contact:hover:before,.nav-contact:focus-visible:before{
+  transform:none;
+  clip-path:inset(0 0 0 0);
+}
+@media(prefers-reduced-motion:reduce){nav a:before,.nav-contact:before{transition:none}}
+
+/* Redes dentro de Sobre mí */
+.about-social{margin-top:46px}
+.about-social .section-label{display:block;margin-bottom:18px}
+.about-social .social-links{margin-top:0}
+
+/* ── Foto de Daiana en Sobre mí ─────────────────────────────────────
+   Ocupa la columna izquierda, que antes quedaba en negro. Crece hasta
+   igualar el alto de la columna de texto, sin empujar la sección. */
+.about-side{display:flex;flex-direction:column}
+.about-side .section-label{padding-top:22px;margin:0}
+.about-photo{
+  margin:28px 0 0;flex:1;min-height:320px;
+  border-radius:14px;overflow:hidden;background:#151517;
+}
+.about-photo img{width:100%;height:100%;object-fit:cover;display:block}
+@media(max-width:1000px){
+  /* En una columna la foto va arriba del texto, con proporción fija
+     para que no se estire de más. */
+  .about-photo{aspect-ratio:4/5;max-height:62vh;min-height:0;flex:none;margin-top:18px}
+}
+
+/* ══ Tratamiento tipográfico ════════════════════════════════════════ */
+
+/* Texto claro sobre fondo oscuro: el antialiasing por defecto lo engorda.
+   Con estas dos reglas la Montserrat recupera su peso real. */
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+body{font-kerning:normal;font-variant-ligatures:common-ligatures contextual;font-optical-sizing:auto}
+
+/* Los títulos se reparten entre líneas en vez de dejar una palabra sola
+   colgando al final; los párrafos evitan la línea huérfana. */
+h1,h2,h3,.plan h3,.page-head h1,.giant,.phone-word{text-wrap:balance}
+p,li,dd,figcaption,.page-lead,.muted,.plan-description{text-wrap:pretty}
+
+/* Los signos de apertura (¿ ¡ «) y las comillas cuelgan fuera de la caja
+   para que el borde del texto quede visualmente recto. */
+.contact-heading h2,.page-head h1,h1{hanging-punctuation:first last}
+
+/* Las cifras de los rótulos (01 /, 02 /) con ancho fijo: así no bailan
+   al comparar una sección con otra. */
+.section-label,.project-number,.plan-top,.case-facts dt,.page-note,
+.preview-label,.eyebrow,.plan-base-label{font-variant-numeric:tabular-nums}
+
+/* Interletrado por tamaño: cuanto más grande el titular, más cerrado.
+   La Montserrat en display necesita esto para no verse suelta. */
+h1{letter-spacing:-.028em}
+h2{letter-spacing:-.024em}
+.page-head h1{letter-spacing:-.026em}
+.plan h3,.project h3{letter-spacing:-.018em}
+/* La Vibes es una cursiva caligráfica: el interletrado negativo la pisa. */
+h1 em,h2 em,.page-head h1 em,.phone-word em,.giant i{letter-spacing:0}
+
+/* Palabras largas (URLs, nombres compuestos) no rompen el layout en celular. */
+p,li,h1,h2,h3,dd{overflow-wrap:break-word}
+
+/* El rótulo de sección respira un poco más: a 10px el interletrado
+   necesita también aire entre líneas. */
+.section-label{line-height:1.9}
+
+/* Los elementos que suben al entrar arrancan abajo y translúcidos; si el
+   JS no corre, quedan visibles igual (no dependen de él para existir). */
+[data-rise]{will-change:transform,opacity}
+@media(prefers-reduced-motion:reduce){[data-rise]{transform:none!important;opacity:1!important}}
