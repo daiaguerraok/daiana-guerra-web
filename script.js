@@ -27,22 +27,22 @@ if(planGrid){
 // es opcional y admite HTML, para poner una palabra en cursiva.
 const fotosProvisionales=Array.from({length:9},(_,i)=>`fotos/foto-0${i+1}.jpg`);
 const sesiones=[
-{slug:'cafe-nomade',nombre:'Café Nómade',titulo:'Café <em>Nómade.</em>',para:'Producto',anio:2025,portada:'fotos/sesion-01.jpg',
- texto:'Fotos de producto para el lanzamiento de la carta de invierno: tazas, granos y detalle de barra, pensadas para el feed y para historias.',fotos:fotosProvisionales},
-{slug:'oreo-burger',nombre:'Oreo Burger',titulo:'Oreo <em>Burger.</em>',para:'Gastronomía',anio:2025,portada:'fotos/sesion-02.jpg',
- texto:'Sesión gastronómica para el feed nuevo: hamburguesas, papas y la barra, con luz cálida y fondo oscuro para que el producto sea el protagonista.',fotos:fotosProvisionales},
-{slug:'editorial-primavera',nombre:'Editorial de primavera',titulo:'Editorial de <em style="--sangria:.148em">primavera.</em>',para:'Retrato',anio:2024,portada:'fotos/sesion-03.jpg',
- texto:'Retratos en exterior para una marca de indumentaria: luz natural, movimiento y planos que muestran la prenda sin perder a la persona.',fotos:fotosProvisionales},
-{slug:'casa-rambla',nombre:'Casa Rambla',titulo:'Casa <em>Rambla.</em>',para:'Espacio',anio:2024,portada:'fotos/sesion-04.jpg',
- texto:'Interiores y detalle para un alojamiento frente al mar: ambientes amplios, texturas y la luz de la tarde entrando por las ventanas.',fotos:fotosProvisionales},
-{slug:'lanzamiento-lua',nombre:'Lanzamiento Lúa',titulo:'Lanzamiento <em>Lúa.</em>',para:'Marca',anio:2025,portada:'fotos/sesion-05.jpg',
- texto:'Imágenes de marca para el lanzamiento: producto, packaging y escenas de uso, con una paleta definida para sostener la identidad en redes.',fotos:fotosProvisionales},
-{slug:'feria-de-ideas',nombre:'Feria de ideas',titulo:'Feria de <em>ideas.</em>',para:'Evento',anio:2023,portada:'fotos/sesion-06.jpg',
- texto:'Cobertura de un evento de emprendedores: stands, charlas y gente, con foco en los momentos que después sirven para contar el evento en redes.',fotos:fotosProvisionales},
+{slug:'exteriores',nombre:'Exteriores',titulo:'<em>Exteriores.</em>',para:'Infantiles',portada:'fotos/sesion-01.jpg',
+ texto:'Sesiones infantiles al aire libre: luz natural, juego y movimiento, para guardar esa etapa tal como es.',fotos:['fotos/exteriores/01.jpg','fotos/exteriores/02.jpg','fotos/exteriores/03.jpg','fotos/exteriores/04.jpg','fotos/exteriores/05.jpg']},
+{slug:'foto-producto',nombre:'Foto Producto',titulo:'Foto <em>Producto.</em>',para:'Gastronomía',portada:'fotos/sesion-02.jpg',
+ texto:'Platos, bebidas y detalle de barra, con luz cálida y fondo cuidado para que el producto sea el protagonista en el feed.',fotos:fotosProvisionales},
+{slug:'glam-studio',nombre:'Glam Studio',titulo:'Glam <em style="--sangria:-.047em">Studio.</em>',para:'Maquillaje',portada:'fotos/sesion-03.jpg',
+ texto:'Retratos en estudio para maquilladoras y sus clientas: piel, color y textura con la luz justa para que el trabajo se vea.',fotos:fotosProvisionales},
+{slug:'memorias-del-amor',nombre:'Memorias del Amor',titulo:'Memorias del <em>Amor.</em>',para:'Civil',portada:'fotos/sesion-04.jpg',
+ texto:'Cobertura de civiles: la firma, los abrazos, el brindis. Los momentos que después se quieren volver a mirar.',fotos:fotosProvisionales},
+{slug:'fotos-personales',nombre:'Fotos Personales',titulo:'Fotos <em>Personales.</em>',para:'Books',portada:'fotos/sesion-05.jpg',
+ texto:'Books personales y profesionales: retratos pensados para redes, perfil o portfolio, con una dirección que te haga sentir cómoda.',fotos:fotosProvisionales},
+{slug:'cumples-infantiles',nombre:'Cumples Infantiles',titulo:'Cumples <em>Infantiles.</em>',para:'Evento',portada:'fotos/sesion-06.jpg',
+ texto:'Cobertura de cumpleaños: la torta, los juegos, las caras. Fotos para revivir la fiesta y compartirla con la familia.',fotos:fotosProvisionales},
 ];
 const folders=document.querySelector('#folders');
-if(folders) folders.innerHTML=sesiones.map((s,i)=>`<li data-rise="${52-i*3}"><a class="folder" href="sesion.html?s=${s.slug}" aria-label="${s.nombre}: ${s.para}, ${s.anio}">
-<span class="folder-tab"><span>${s.para.toUpperCase()}</span><i aria-hidden="true">${s.anio}</i></span>
+if(folders) folders.innerHTML=sesiones.map((s,i)=>`<li data-rise="${52-i*3}"><a class="folder" href="sesion.html?s=${s.slug}" aria-label="${s.nombre}: ${s.para}">
+<span class="folder-tab">${s.para.toUpperCase()}</span>
 <span class="folder-body"><span class="folder-shadow" aria-hidden="true"></span><span class="folder-cover"><img src="${s.portada}" alt="" width="1080" height="1440" loading="${i<3?'eager':'lazy'}" decoding="async"${i<3?' fetchpriority="high"':''}><span class="folder-sheen" aria-hidden="true"></span></span></span>
 <span class="folder-meta"><strong>${s.nombre}</strong><span>${s.fotos.length} FOTOS</span></span></a></li>`).join('');
 const sessionHead=document.querySelector('#session-head');
@@ -52,15 +52,58 @@ if(sessionHead){
   if(s){
     document.title=`${s.nombre} — ${s.para} — dg.creando`;
     sessionHead.innerHTML=`<a class="back-link" href="fotografia.html">← VOLVER A FOTOGRAFÍA</a>
-<p class="section-label">SESIÓN / ${s.para.toUpperCase()} · ${s.anio}</p>
+<p class="section-label">SESIÓN / ${s.para.toUpperCase()}</p>
 <h1>${s.titulo||s.nombre}</h1>
 <p class="page-lead">${s.texto}</p>
-<dl class="case-facts"><div><dt>PARA</dt><dd>${s.para}</dd></div><div><dt>AÑO</dt><dd>${s.anio}</dd></div><div><dt>FOTOS</dt><dd>${s.fotos.length}</dd></div></dl>`;
-    document.querySelector('#session-gallery').innerHTML=s.fotos.map((f,i)=>`<figure data-rise="52"><img src="${f}" alt="${s.nombre}, foto ${i+1}" width="1000" height="1250" loading="${i<3?'eager':'lazy'}" decoding="async"></figure>`).join('');
+<dl class="case-facts"><div><dt>PARA</dt><dd>${s.para}</dd></div><div><dt>FOTOS</dt><dd>${s.fotos.length}</dd></div></dl>`;
+    document.querySelector('#session-gallery').innerHTML=s.fotos.map((f,i)=>`<figure data-rise="52"><a href="${f}" data-foto="${i}"><img src="${f}" alt="${s.nombre}, foto ${i+1}" width="1080" height="1440" loading="${i<3?'eager':'lazy'}" decoding="async"></a></figure>`).join('');
+    montarVisor(s.fotos);
   }else{
     sessionHead.innerHTML=`<a class="back-link" href="fotografia.html">← VOLVER A FOTOGRAFÍA</a><p class="section-label">FOTOGRAFÍA</p><h1>Esa sesión <em>no está.</em></h1><p class="no-session">Elegí una desde la página de fotografía.</p>`;
     document.querySelector('.session-section')?.remove();
   }
+}
+
+// ── Visor de fotos ───────────────────────────────────────────────────
+function montarVisor(fotos){
+  const galeria=document.querySelector('#session-gallery');
+  const visor=document.createElement('div');
+  visor.className='visor'; visor.setAttribute('role','dialog'); visor.setAttribute('aria-modal','true'); visor.setAttribute('aria-label','Fotos de la sesión');
+  visor.innerHTML='<button class="visor-prev" aria-label="Foto anterior">←</button><figure><img alt=""><figcaption></figcaption></figure><button class="visor-next" aria-label="Foto siguiente">→</button><button class="visor-cerrar" aria-label="Cerrar">×</button>';
+  document.body.append(visor);
+  const img=visor.querySelector('img'), pie=visor.querySelector('figcaption');
+  let actual=0, origen=null;
+  const precargar=i=>{ if(fotos[i]){ const p=new Image(); p.src=fotos[i]; } };
+  function mostrar(i){
+    actual=(i+fotos.length)%fotos.length;
+    img.classList.remove('lista');
+    const src=fotos[actual];
+    const listo=()=>{ if(img.src.endsWith(src.split('/').pop())) img.classList.add('lista'); };
+    img.onload=listo; img.src=src; if(img.complete) listo();
+    pie.textContent=`${actual+1} / ${fotos.length}`;
+    precargar(actual+1); precargar(actual-1);
+  }
+  function abrir(i,desde){ origen=desde; document.body.classList.add('visor-abierto'); visor.classList.add('abierto'); mostrar(i); visor.querySelector('.visor-cerrar').focus(); }
+  function cerrar(){ visor.classList.remove('abierto'); document.body.classList.remove('visor-abierto'); origen?.focus(); }
+  galeria.addEventListener('click',e=>{
+    const a=e.target.closest('a[data-foto]'); if(!a) return;
+    e.preventDefault(); e.stopPropagation();          // que no lo agarre la transición entre páginas
+    abrir(Number(a.dataset.foto),a);
+  });
+  visor.querySelector('.visor-prev').addEventListener('click',()=>mostrar(actual-1));
+  visor.querySelector('.visor-next').addEventListener('click',()=>mostrar(actual+1));
+  visor.querySelector('.visor-cerrar').addEventListener('click',cerrar);
+  visor.addEventListener('click',e=>{ if(e.target===visor||e.target.tagName==='FIGURE') cerrar(); });
+  document.addEventListener('keydown',e=>{
+    if(!visor.classList.contains('abierto')) return;
+    if(e.key==='Escape') cerrar();
+    else if(e.key==='ArrowRight') mostrar(actual+1);
+    else if(e.key==='ArrowLeft') mostrar(actual-1);
+  });
+  // Deslizar en táctil.
+  let x0=null;
+  visor.addEventListener('pointerdown',e=>{ x0=e.clientX; },{passive:true});
+  visor.addEventListener('pointerup',e=>{ if(x0===null) return; const dx=e.clientX-x0; x0=null; if(Math.abs(dx)>40) mostrar(actual+(dx<0?1:-1)); },{passive:true});
 }
 
 document.querySelectorAll('#year').forEach(el=>el.textContent=new Date().getFullYear());
@@ -121,6 +164,47 @@ addEventListener('resize',()=>{measure();requestAnimationFrame(render);},{passiv
 addEventListener('load',()=>{measure();render();});
 measure();
 addEventListener('scroll',()=>{if(!scheduled){requestAnimationFrame(render);scheduled=true}},{passive:true});
+// ── Cursor propio ────────────────────────────────────────────────────
+if(!reduced.matches&&matchMedia('(hover:hover) and (pointer:fine)').matches){
+  const c=document.createElement('div'); c.className='cursor'; c.setAttribute('aria-hidden','true');
+  c.innerHTML='<i></i><b></b>';
+  const claros='.contact-footer form,.tier-4,.button,.visual,.phone-screen,.nav-contact:hover';
+  document.body.append(c); document.documentElement.classList.add('cursor-propio');
+  let mx=innerWidth/2,my=innerHeight/2,x=mx,y=my,activo=false;
+  addEventListener('pointermove',e=>{ mx=e.clientX; my=e.clientY; if(!activo){activo=true;x=mx;y=my;c.classList.add('visible');requestAnimationFrame(seguir);} },{passive:true});
+  function seguir(){ x+=(mx-x)*.22; y+=(my-y)*.22; c.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`; requestAnimationFrame(seguir); }
+  document.addEventListener('mouseleave',()=>c.classList.remove('visible'));
+  document.addEventListener('mouseenter',()=>c.classList.add('visible'));
+  addEventListener('pointerover',e=>{
+    const t=e.target;
+    c.classList.toggle('oculto',!!t.closest('input,textarea'));
+    const foto=!!t.closest('#session-gallery a');
+    c.classList.toggle('mas',foto);
+    c.classList.toggle('grande',!foto&&!!t.closest('a,button,.plan,label,[role="button"]'));
+    c.classList.toggle('oscuro',!!t.closest(claros));
+  },{passive:true});
+}
+
+// ── Palabra que cambia ───────────────────────────────────────────────
+document.querySelectorAll('.rota').forEach(rota=>{
+  const palabras=(rota.dataset.palabras||'').split('|').filter(Boolean);
+  if(palabras.length<2||reduced.matches) return;
+  let i=0, span=document.createElement('span'); span.textContent=palabras[0]; rota.replaceChildren(span);
+  rota.style.width=span.offsetWidth+'px';
+  const medir=()=>{ rota.style.width=rota.querySelector('span:not(.sale)').offsetWidth+'px'; };
+  addEventListener('resize',medir,{passive:true});
+  setInterval(()=>{
+    if(document.hidden) return;
+    i=(i+1)%palabras.length;
+    const nuevo=document.createElement('span'); nuevo.className='entra'; nuevo.textContent=palabras[i];
+    const viejo=rota.querySelector('span:not(.sale)');
+    rota.append(nuevo);
+    rota.style.width=nuevo.offsetWidth+'px';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ viejo.classList.add('sale'); nuevo.classList.remove('entra'); }));
+    setTimeout(()=>viejo.remove(),900);
+  },2600);
+});
+
 // ── Carpetas: inclinación hacia el cursor ────────────────────────────
 // Solo con mouse. La posición del puntero se guarda en cada evento y se
 // aplica una vez por cuadro; el CSS hace el resto con variables.
@@ -238,7 +322,7 @@ if(phoneSlot&&hasWebGL()){
   function start(){ if(!running){running=true;requestAnimationFrame(frame);} }
   addEventListener('wheel',event=>{
     if(event.ctrlKey) return;                                    // zoom del navegador
-    if(document.body.classList.contains('menu-open')) return;     // menú mobile abierto
+    if(document.body.classList.contains('menu-open')||document.body.classList.contains('visor-abierto')) return; // menú o visor abiertos
     if(event.target.closest && event.target.closest('textarea')) return; // scroll propio del campo
     event.preventDefault();
     const paso=event.deltaMode===1?16:(event.deltaMode===2?innerHeight:1);
@@ -330,7 +414,7 @@ if(phoneSlot&&hasWebGL()){
     const enlace=event.target.closest&&event.target.closest('a[href]');
     if(!enlace||enlace.target==='_blank'||enlace.hasAttribute('download')) return;
     const href=enlace.getAttribute('href');
-    if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')) return;
+    if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')||/\.(jpe?g|png|webp|gif)$/i.test(href)) return;
     let destino;
     try{ destino=new URL(href,location.href); }catch(_){ return; }
     if(destino.origin!==location.origin) return;

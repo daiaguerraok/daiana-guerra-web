@@ -15,7 +15,7 @@ de publicación `.`. Rama de producción: `main`.
 |---|---|
 | `index.html` | Home: hero, sobre mí, portfolio, planes y contacto |
 | `fotografia.html` | Fotografía: las sesiones, como carpetas |
-| `sesion.html` | Una sesión de fotos (`sesion.html?s=slug`): para qué fue, año y todas las fotos |
+| `sesion.html` | Una sesión de fotos (`sesion.html?s=slug`): para qué fue y todas las fotos |
 | `caso-oreo-burger.html` | Caso 01: feed de Oreo Burger, antes y después |
 
 Cada caso del portfolio abre su propia página. Para sumar uno nuevo, se copia
@@ -37,7 +37,7 @@ fotos/               portadas de sesión, fotos de cada sesión y retrato
 
 ## Material
 
-Las imágenes de los casos 02 y 03, la galería de fotografía y el retrato son
+Las imágenes de los casos 02 y 03 y las de las sesiones de fotografía son
 **placeholders** hasta recibir el material definitivo. Medidas:
 
 | Qué | Medida |
@@ -85,7 +85,7 @@ inercia, ni desplazamientos, ni transiciones.
 - **Planes:** el array `plans` al principio de `script.js`. Los ítems que se
   repiten en todos los planes van en `planBase` y se muestran una sola vez.
 - **Sesiones de fotografía:** el array `sesiones` en `script.js`. Cada
-  sesión es un objeto con `slug`, `nombre`, `para`, `anio`, `portada`,
+  sesión es un objeto con `slug`, `nombre`, `para`, `portada`,
   `texto` y `fotos`; con eso se arman la carpeta y su página. `titulo` es
   opcional y admite HTML, para poner una palabra en cursiva.
 - **WhatsApp:** la constante `WHATSAPP_NUMBER`, también en `script.js`.
