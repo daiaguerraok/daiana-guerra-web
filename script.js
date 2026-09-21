@@ -30,15 +30,20 @@ const sesiones=[
 {slug:'exteriores',nombre:'Exteriores',titulo:'<em>Exteriores.</em>',para:'Infantiles',portada:'fotos/sesion-01.jpg',
  texto:'Sesiones infantiles al aire libre: luz natural, juego y movimiento, para guardar esa etapa tal como es.',fotos:['fotos/exteriores/01.jpg','fotos/exteriores/02.jpg','fotos/exteriores/03.jpg','fotos/exteriores/04.jpg','fotos/exteriores/05.jpg']},
 {slug:'foto-producto',nombre:'Foto Producto',titulo:'Foto <em>Producto.</em>',para:'Gastronomía',portada:'fotos/sesion-02.jpg',
- texto:'Platos, bebidas y detalle de barra, con luz cálida y fondo cuidado para que el producto sea el protagonista en el feed.',fotos:fotosProvisionales},
+ texto:'Platos, bebidas y detalle de barra, con luz cálida y fondo cuidado para que el producto sea el protagonista en el feed.',
+ fotos:[{s:'fotos/foto-producto/01.jpg',w:1067,h:1600},{s:'fotos/foto-producto/02.jpg',w:1067,h:1600},{s:'fotos/foto-producto/03.jpg',w:1067,h:1600},{s:'fotos/foto-producto/04.jpg',w:1067,h:1600},{s:'fotos/foto-producto/05.jpg',w:1067,h:1600},{s:'fotos/foto-producto/06.jpg',w:1067,h:1600},{s:'fotos/foto-producto/07.jpg',w:1067,h:1600},{s:'fotos/foto-producto/08.jpg',w:1600,h:1067},{s:'fotos/foto-producto/09.jpg',w:1600,h:1067},{s:'fotos/foto-producto/10.jpg',w:1067,h:1600},{s:'fotos/foto-producto/11.jpg',w:1067,h:1600},{s:'fotos/foto-producto/12.jpg',w:1067,h:1600},{s:'fotos/foto-producto/13.jpg',w:1067,h:1600}]},
 {slug:'glam-studio',nombre:'Glam Studio',titulo:'Glam <em style="--sangria:-.047em">Studio.</em>',para:'Maquillaje',portada:'fotos/sesion-03.jpg',
- texto:'Retratos en estudio para maquilladoras y sus clientas: piel, color y textura con la luz justa para que el trabajo se vea.',fotos:fotosProvisionales},
+ texto:'Retratos en estudio para maquilladoras y sus clientas: piel, color y textura con la luz justa para que el trabajo se vea.',
+ fotos:[{s:'fotos/glam-studio/01.jpg',w:1067,h:1600},{s:'fotos/glam-studio/02.jpg',w:1067,h:1600},{s:'fotos/glam-studio/03.jpg',w:1067,h:1600},{s:'fotos/glam-studio/04.jpg',w:1067,h:1600},{s:'fotos/glam-studio/05.jpg',w:1067,h:1600},{s:'fotos/glam-studio/06.jpg',w:1067,h:1600},{s:'fotos/glam-studio/07.jpg',w:1067,h:1600},{s:'fotos/glam-studio/08.jpg',w:1067,h:1600}]},
 {slug:'memorias-del-amor',nombre:'Memorias del Amor',titulo:'Memorias del <em>Amor.</em>',para:'Civil',portada:'fotos/sesion-04.jpg',
  texto:'Cobertura de civiles: la firma, los abrazos, el brindis. Los momentos que después se quieren volver a mirar.',fotos:fotosProvisionales},
 {slug:'fotos-personales',nombre:'Fotos Personales',titulo:'Fotos <em>Personales.</em>',para:'Books',portada:'fotos/sesion-05.jpg',
  texto:'Books personales y profesionales: retratos pensados para redes, perfil o portfolio, con una dirección que te haga sentir cómoda.',fotos:fotosProvisionales},
 {slug:'cumples-infantiles',nombre:'Cumples Infantiles',titulo:'Cumples <em>Infantiles.</em>',para:'Evento',portada:'fotos/sesion-06.jpg',
  texto:'Cobertura de cumpleaños: la torta, los juegos, las caras. Fotos para revivir la fiesta y compartirla con la familia.',fotos:fotosProvisionales},
+{slug:'moda',nombre:'Moda',titulo:'<em>Moda.</em>',para:'Editorial',portada:'fotos/sesion-moda.jpg',
+ texto:'Vestidos de gala y editorial de moda: color, textura y movimiento, con una dirección de arte pensada para cada prenda.',
+ fotos:[{s:'fotos/moda/01.jpg',w:1067,h:1600},{s:'fotos/moda/02.jpg',w:1067,h:1600},{s:'fotos/moda/03.jpg',w:1067,h:1600},{s:'fotos/moda/04.jpg',w:1067,h:1600},{s:'fotos/moda/05.jpg',w:1067,h:1600},{s:'fotos/moda/06.jpg',w:1067,h:1600},{s:'fotos/moda/07.jpg',w:1067,h:1600},{s:'fotos/moda/08.jpg',w:1067,h:1600},{s:'fotos/moda/09.jpg',w:1251,h:1600}]},
 ];
 const folders=document.querySelector('#folders');
 if(folders) folders.innerHTML=sesiones.map((s,i)=>`<li data-rise="${52-i*3}"><a class="folder" href="sesion.html?s=${s.slug}" aria-label="${s.nombre}: ${s.para}">
@@ -56,8 +61,11 @@ if(sessionHead){
 <h1>${s.titulo||s.nombre}</h1>
 <p class="page-lead">${s.texto}</p>
 <dl class="case-facts"><div><dt>PARA</dt><dd>${s.para}</dd></div><div><dt>FOTOS</dt><dd>${s.fotos.length}</dd></div></dl>`;
-    document.querySelector('#session-gallery').innerHTML=s.fotos.map((f,i)=>`<figure data-rise="52"><a href="${f}" data-foto="${i}"><img src="${f}" alt="${s.nombre}, foto ${i+1}" width="1080" height="1440" loading="${i<3?'eager':'lazy'}" decoding="async"></a></figure>`).join('');
-    montarVisor(s.fotos);
+    document.querySelector('#session-gallery').innerHTML=s.fotos.map((f,i)=>{
+  const src=typeof f==='string'?f:f.s, w=typeof f==='string'?1080:f.w, h=typeof f==='string'?1440:f.h;
+  return `<figure data-rise="52"><a href="${src}" data-foto="${i}"><img src="${src}" alt="${s.nombre}, foto ${i+1}" width="${w}" height="${h}" loading="${i<3?'eager':'lazy'}" decoding="async"></a></figure>`;
+}).join('');
+    montarVisor(s.fotos.map(f=>typeof f==='string'?f:f.s));
   }else{
     sessionHead.innerHTML=`<a class="back-link" href="fotografia.html">← VOLVER A FOTOGRAFÍA</a><p class="section-label">FOTOGRAFÍA</p><h1>Esa sesión <em>no está.</em></h1><p class="no-session">Elegí una desde la página de fotografía.</p>`;
     document.querySelector('.session-section')?.remove();
