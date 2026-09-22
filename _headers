@@ -1,0 +1,20 @@
+# Cloudflare Pages: caché larga para lo que tiene nombre fijo y no cambia
+# sin cambiar de contenido (fuentes, fotos, mockup); el HTML/CSS/JS se
+# revalida siempre.
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+/fotos/*
+  Cache-Control: public, max-age=2592000
+/casos/*
+  Cache-Control: public, max-age=2592000
+/phone-3d.js
+  Cache-Control: public, max-age=604800
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+/style.css
+  Cache-Control: public, max-age=0, must-revalidate
+/script.js
+  Cache-Control: public, max-age=0, must-revalidate
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

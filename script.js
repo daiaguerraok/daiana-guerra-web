@@ -10,6 +10,20 @@ const plans = [
 // de cada lista sin diferenciar nada. Ahora se muestran una sola vez debajo
 // de la grilla, y cada tarjeta lista solo lo suyo.
 const planBase = ['Portadas para historias destacadas','Optimización de la biografía','Copy + CTA','Hashtags y palabras clave'];
+// Cada página arranca arriba del todo: el navegador tiende a restaurar el
+// scroll anterior al cambiar de página o al volver, y quedaba a mitad de
+// camino. Si el link trae un ancla (#planes) se respeta.
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+const arriba=()=>{ if(!location.hash) scrollTo({top:0,left:0,behavior:'instant'}); };
+arriba();
+addEventListener('DOMContentLoaded',arriba);
+addEventListener('pageshow',arriba);
+// No en 'load': con las imágenes pesadas llega tarde y devolvería al
+// inicio a quien ya empezó a bajar.
+// Al irse, la página se guarda con el scroll en cero: así ni el botón atrás
+// ni la caché del navegador la traen de vuelta a mitad de camino.
+addEventListener('pagehide',()=>scrollTo({top:0,left:0,behavior:'instant'}));
+
 const whatsappURL = message => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 const planGrid=document.querySelector('#plan-grid');
 if(planGrid) planGrid.innerHTML = plans.map((p,i)=>`<article class="plan tier-${i+1}"><div class="plan-top"><span>PLAN / 0${i+1}</span><span class="tier-bars" aria-hidden="true">${Array.from({length:4},(_,j)=>`<i class="${j<=i?'active':''}"></i>`).join('')}</span></div><h3>${p.name}</h3><p class="plan-description">${p.description}</p><ul>${p.items.filter(item=>!planBase.includes(item)).map(item=>`<li>${item}</li>`).join('')}</ul><a class="button plan-contact" data-plan="${p.name}" href="${whatsappURL(`Hola Daiana, me interesa el plan ${p.name}. Me gustaría conocer el precio y cómo podemos empezar a trabajar en mi marca.`)}" target="_blank" rel="noopener noreferrer">Quiero este plan <span>↗</span></a></article>`).join('');
@@ -25,30 +39,54 @@ if(planGrid){
 // sesión (sesion.html?s=slug). Para sumar una sesión: un objeto acá, la
 // portada en fotos/ (1080 × 1440, vertical) y sus fotos (1000 × 1250). `titulo`
 // es opcional y admite HTML, para poner una palabra en cursiva.
-const fotosProvisionales=Array.from({length:9},(_,i)=>`fotos/foto-0${i+1}.jpg`);
 const sesiones=[
 {slug:'exteriores',nombre:'Exteriores',titulo:'<em>Exteriores.</em>',para:'Infantiles',portada:'fotos/sesion-01.jpg',
- texto:'Sesiones infantiles al aire libre: luz natural, juego y movimiento, para guardar esa etapa tal como es.',fotos:['fotos/exteriores/01.jpg','fotos/exteriores/02.jpg','fotos/exteriores/03.jpg','fotos/exteriores/04.jpg','fotos/exteriores/05.jpg']},
-{slug:'foto-producto',nombre:'Foto Producto',titulo:'Foto <em>Producto.</em>',para:'Gastronomía',portada:'fotos/sesion-02.jpg',
- texto:'Platos, bebidas y detalle de barra, con luz cálida y fondo cuidado para que el producto sea el protagonista en el feed.',
- fotos:[{s:'fotos/foto-producto/01.jpg',w:1067,h:1600},{s:'fotos/foto-producto/02.jpg',w:1067,h:1600},{s:'fotos/foto-producto/03.jpg',w:1067,h:1600},{s:'fotos/foto-producto/04.jpg',w:1067,h:1600},{s:'fotos/foto-producto/05.jpg',w:1067,h:1600},{s:'fotos/foto-producto/06.jpg',w:1067,h:1600},{s:'fotos/foto-producto/07.jpg',w:1067,h:1600},{s:'fotos/foto-producto/08.jpg',w:1600,h:1067},{s:'fotos/foto-producto/09.jpg',w:1600,h:1067},{s:'fotos/foto-producto/10.jpg',w:1067,h:1600},{s:'fotos/foto-producto/11.jpg',w:1067,h:1600},{s:'fotos/foto-producto/12.jpg',w:1067,h:1600},{s:'fotos/foto-producto/13.jpg',w:1067,h:1600}]},
+ texto:'Sesiones infantiles al aire libre: luz natural, juego y movimiento, para guardar esa etapa tal como es.',fotos:[{s:'fotos/exteriores/01.jpg',w:1080,h:1440},{s:'fotos/exteriores/02.jpg',w:1080,h:1440},{s:'fotos/exteriores/03.jpg',w:1080,h:1440},{s:'fotos/exteriores/04.jpg',w:1080,h:1440},{s:'fotos/exteriores/05.jpg',w:1080,h:1440},{s:'fotos/exteriores/06.jpg',w:1153,h:1440},{s:'fotos/exteriores/07.jpg',w:1152,h:1440},{s:'fotos/exteriores/08.jpg',w:1153,h:1440}]},
 {slug:'glam-studio',nombre:'Glam Studio',titulo:'Glam <em style="--sangria:-.047em">Studio.</em>',para:'Maquillaje',portada:'fotos/sesion-03.jpg',
- texto:'Retratos en estudio para maquilladoras y sus clientas: piel, color y textura con la luz justa para que el trabajo se vea.',
- fotos:[{s:'fotos/glam-studio/01.jpg',w:1067,h:1600},{s:'fotos/glam-studio/02.jpg',w:1067,h:1600},{s:'fotos/glam-studio/03.jpg',w:1067,h:1600},{s:'fotos/glam-studio/04.jpg',w:1067,h:1600},{s:'fotos/glam-studio/05.jpg',w:1067,h:1600},{s:'fotos/glam-studio/06.jpg',w:1067,h:1600},{s:'fotos/glam-studio/07.jpg',w:1067,h:1600},{s:'fotos/glam-studio/08.jpg',w:1067,h:1600}]},
+ texto:'Fotos pensadas para maquilladoras: cada look retratado con cuidado, para que puedas mostrar tu trabajo de una forma más profesional en redes, en tu portfolio o donde lo necesites.',
+ fotos:[{s:'fotos/glam-studio/01.jpg',w:960,h:1440},{s:'fotos/glam-studio/02.jpg',w:960,h:1440},{s:'fotos/glam-studio/03.jpg',w:960,h:1440},{s:'fotos/glam-studio/04.jpg',w:960,h:1440},{s:'fotos/glam-studio/05.jpg',w:960,h:1440},{s:'fotos/glam-studio/06.jpg',w:960,h:1440},{s:'fotos/glam-studio/07.jpg',w:960,h:1440},{s:'fotos/glam-studio/08.jpg',w:960,h:1440},{s:'fotos/glam-studio/09.jpg',w:960,h:1440},{s:'fotos/glam-studio/10.jpg',w:960,h:1440},{s:'fotos/glam-studio/11.jpg',w:960,h:1440},{s:'fotos/glam-studio/12.jpg',w:960,h:1440}]},
 {slug:'memorias-del-amor',nombre:'Memorias del Amor',titulo:'Memorias del <em>Amor.</em>',para:'Civil',portada:'fotos/sesion-04.jpg',
- texto:'Cobertura de civiles: la firma, los abrazos, el brindis. Los momentos que después se quieren volver a mirar.',fotos:fotosProvisionales},
+ texto:'Cobertura de civiles: la firma, los abrazos, las miradas. Los momentos que después se quieren volver a mirar.',
+ fotos:[{s:'fotos/civil/01.jpg',w:1440,h:1014},{s:'fotos/civil/02.jpg',w:1440,h:1100},{s:'fotos/civil/03.jpg',w:1152,h:1440},{s:'fotos/civil/04.jpg',w:1152,h:1440},{s:'fotos/civil/05.jpg',w:1151,h:1440},{s:'fotos/civil/06.jpg',w:960,h:1440}]},
 {slug:'fotos-personales',nombre:'Fotos Personales',titulo:'Fotos <em>Personales.</em>',para:'Books',portada:'fotos/sesion-05.jpg',
- texto:'Books personales y profesionales: retratos pensados para redes, perfil o portfolio, con una dirección que te haga sentir cómoda.',fotos:fotosProvisionales},
+ texto:'Books personales y profesionales: retratos pensados para redes, perfil o portfolio, con una dirección que te haga sentir cómoda.',
+ fotos:[{s:'fotos/personales/01.jpg',w:1080,h:1244},{s:'fotos/personales/02.jpg',w:1440,h:1440},{s:'fotos/personales/03.jpg',w:1251,h:1440},{s:'fotos/personales/04.jpg',w:1152,h:1440},{s:'fotos/personales/05.jpg',w:1152,h:1440},{s:'fotos/personales/06.jpg',w:1152,h:1440},{s:'fotos/personales/07.jpg',w:1152,h:1440},{s:'fotos/personales/08.jpg',w:960,h:1440},{s:'fotos/personales/09.jpg',w:960,h:1440},{s:'fotos/personales/10.jpg',w:960,h:1440},{s:'fotos/personales/11.jpg',w:960,h:1440}]},
 {slug:'cumples-infantiles',nombre:'Cumples Infantiles',titulo:'Cumples <em>Infantiles.</em>',para:'Evento',portada:'fotos/sesion-06.jpg',
- texto:'Cobertura de cumpleaños: la torta, los juegos, las caras. Fotos para revivir la fiesta y compartirla con la familia.',fotos:fotosProvisionales},
+ texto:'Cobertura de cumpleaños: la torta, los juegos, las caras. Fotos para revivir la fiesta y compartirla con la familia.',
+ fotos:[{s:'fotos/cumples/01.jpg',w:960,h:1440},{s:'fotos/cumples/02.jpg',w:960,h:1440},{s:'fotos/cumples/03.jpg',w:1440,h:960},{s:'fotos/cumples/04.jpg',w:1440,h:960},{s:'fotos/cumples/05.jpg',w:1153,h:1440},{s:'fotos/cumples/06.jpg',w:1152,h:1440},{s:'fotos/cumples/07.jpg',w:1152,h:1440},{s:'fotos/cumples/08.jpg',w:1152,h:1440},{s:'fotos/cumples/09.jpg',w:1345,h:1106},{s:'fotos/cumples/10.jpg',w:1124,h:1405},{s:'fotos/cumples/11.jpg',w:960,h:1440},{s:'fotos/cumples/12.jpg',w:960,h:1440},{s:'fotos/cumples/13.jpg',w:960,h:1440},{s:'fotos/cumples/14.jpg',w:960,h:1440},{s:'fotos/cumples/15.jpg',w:960,h:1440},{s:'fotos/cumples/16.jpg',w:960,h:1440},{s:'fotos/cumples/17.jpg',w:960,h:1440},{s:'fotos/cumples/18.jpg',w:960,h:1440},{s:'fotos/cumples/19.jpg',w:960,h:1440},{s:'fotos/cumples/20.jpg',w:960,h:1440},{s:'fotos/cumples/21.jpg',w:960,h:1440}]},
 {slug:'moda',nombre:'Moda',titulo:'<em>Moda.</em>',para:'Editorial',portada:'fotos/sesion-moda.jpg',
- texto:'Vestidos de gala y editorial de moda: color, textura y movimiento, con una dirección de arte pensada para cada prenda.',
- fotos:[{s:'fotos/moda/01.jpg',w:1067,h:1600},{s:'fotos/moda/02.jpg',w:1067,h:1600},{s:'fotos/moda/03.jpg',w:1067,h:1600},{s:'fotos/moda/04.jpg',w:1067,h:1600},{s:'fotos/moda/05.jpg',w:1067,h:1600},{s:'fotos/moda/06.jpg',w:1067,h:1600},{s:'fotos/moda/07.jpg',w:1067,h:1600},{s:'fotos/moda/08.jpg',w:1067,h:1600},{s:'fotos/moda/09.jpg',w:1251,h:1600}]},
+ texto:'Sesiones para Pink, alquiler de vestidos, pensadas para mostrar la calidad y la variedad de sus prendas: el brillo de cada tela, el calce y el movimiento, con una dirección pensada para cada vestido.',
+ fotos:[{s:'fotos/moda/01.jpg',w:960,h:1440},{s:'fotos/moda/02.jpg',w:960,h:1440},{s:'fotos/moda/03.jpg',w:960,h:1440},{s:'fotos/moda/04.jpg',w:960,h:1440},{s:'fotos/moda/05.jpg',w:960,h:1440},{s:'fotos/moda/06.jpg',w:960,h:1440},{s:'fotos/moda/07.jpg',w:960,h:1440},{s:'fotos/moda/08.jpg',w:960,h:1440},{s:'fotos/moda/09.jpg',w:1126,h:1440}]},
+{slug:'foto-producto',nombre:'Foto Producto',titulo:'Foto <em>Producto.</em>',para:'Gastronomía',portada:'fotos/sesion-02.jpg',
+ texto:'Fotoproducto para gastronomía: platos, bebidas y detalles retratados con luz cálida y composición cuidada, para que tu producto se destaque de forma profesional en el feed, la carta o donde lo muestres.',
+ fotos:[{s:'fotos/foto-producto/01.jpg',w:960,h:1440},{s:'fotos/foto-producto/02.jpg',w:960,h:1440},{s:'fotos/foto-producto/03.jpg',w:960,h:1440},{s:'fotos/foto-producto/04.jpg',w:960,h:1440},{s:'fotos/foto-producto/05.jpg',w:960,h:1440},{s:'fotos/foto-producto/06.jpg',w:960,h:1440},{s:'fotos/foto-producto/07.jpg',w:960,h:1440},{s:'fotos/foto-producto/08.jpg',w:1440,h:960},{s:'fotos/foto-producto/09.jpg',w:1440,h:960},{s:'fotos/foto-producto/10.jpg',w:960,h:1440},{s:'fotos/foto-producto/11.jpg',w:960,h:1440},{s:'fotos/foto-producto/12.jpg',w:960,h:1440},{s:'fotos/foto-producto/13.jpg',w:960,h:1440}]},
 ];
+// ── Fotos livianas ───────────────────────────────────────────────────
+// optimizar-fotos.py genera, por cada .jpg, un .webp y versiones a 480 y
+// 960 px de ancho. Acá se arma el srcset para que el navegador baje solo
+// el tamaño que la pantalla necesita; el .jpg queda de respaldo.
+const webp=src=>src.replace(/\.jpg$/i,'.webp');
+const srcset=(src,w=1440)=>{const b=src.replace(/\.jpg$/i,'');const l=[];if(w>480)l.push(`${b}-480.webp 480w`);if(w>960)l.push(`${b}-960.webp 960w`);l.push(`${b}.webp ${w}w`);return l.join(', ');};
+
+// ── Cinta de fotos verticales (cabecera de fotografia.html) ───────────
+// Se alimenta sola de las sesiones: toma las fotos verticales, una de cada
+// sesión por vuelta para que se mezclen, y duplica la tira para que el
+// desplazamiento sea infinito sin corte. Cada foto lleva a su sesión.
+const cinta=document.querySelector('#cinta .cinta-track');
+if(cinta){
+  const norm=f=>typeof f==='string'?{s:f,w:1000,h:1250}:f;
+  const porSesion=sesiones.map(s=>s.fotos.map(norm).filter(f=>f.h>f.w).map(f=>({...f,slug:s.slug,nombre:s.nombre})));
+  const eleccion=[];
+  for(let i=0;i<3;i++) porSesion.forEach(c=>{ if(c[i]) eleccion.push(c[i]); });
+  const tira=eleccion.map(f=>`<a href="sesion.html?s=${f.slug}" tabindex="-1" aria-label="${f.nombre}"><img src="${f.s}" srcset="${srcset(f.s,f.w)}" sizes="220px" width="${f.w}" height="${f.h}" alt="" decoding="async"></a>`).join('');
+  cinta.innerHTML=tira+tira;
+  cinta.style.setProperty('--n',eleccion.length);
+}
+
 const folders=document.querySelector('#folders');
 if(folders) folders.innerHTML=sesiones.map((s,i)=>`<li data-rise="${52-i*3}"><a class="folder" href="sesion.html?s=${s.slug}" aria-label="${s.nombre}: ${s.para}">
 <span class="folder-tab">${s.para.toUpperCase()}</span>
-<span class="folder-body"><span class="folder-shadow" aria-hidden="true"></span><span class="folder-cover"><img src="${s.portada}" alt="" width="1080" height="1440" loading="${i<3?'eager':'lazy'}" decoding="async"${i<3?' fetchpriority="high"':''}><span class="folder-sheen" aria-hidden="true"></span></span></span>
+<span class="folder-body"><span class="folder-shadow" aria-hidden="true"></span><span class="folder-cover"><img src="${s.portada}" srcset="${srcset(s.portada,1080)}" sizes="(max-width:600px) 92vw, (max-width:1000px) 46vw, 30vw" alt="" width="1080" height="1440" loading="${i<3?'eager':'lazy'}" decoding="async"${i<3?' fetchpriority="high"':''}><span class="folder-sheen" aria-hidden="true"></span></span></span>
 <span class="folder-meta"><strong>${s.nombre}</strong><span>${s.fotos.length} FOTOS</span></span></a></li>`).join('');
 const sessionHead=document.querySelector('#session-head');
 if(sessionHead){
@@ -63,7 +101,7 @@ if(sessionHead){
 <dl class="case-facts"><div><dt>PARA</dt><dd>${s.para}</dd></div><div><dt>FOTOS</dt><dd>${s.fotos.length}</dd></div></dl>`;
     document.querySelector('#session-gallery').innerHTML=s.fotos.map((f,i)=>{
   const src=typeof f==='string'?f:f.s, w=typeof f==='string'?1080:f.w, h=typeof f==='string'?1440:f.h;
-  return `<figure data-rise="52"><a href="${src}" data-foto="${i}"><img src="${src}" alt="${s.nombre}, foto ${i+1}" width="${w}" height="${h}" loading="${i<3?'eager':'lazy'}" decoding="async"></a></figure>`;
+  return `<figure data-rise="52"><a href="${src}" data-foto="${i}"><img src="${src}" srcset="${srcset(src,w)}" sizes="(max-width:700px) 48vw, 30vw" alt="${s.nombre}, foto ${i+1}" width="${w}" height="${h}" loading="${i<3?'eager':'lazy'}" decoding="async"></a></figure>`;
 }).join('');
     montarVisor(s.fotos.map(f=>typeof f==='string'?f:f.s));
   }else{
@@ -81,11 +119,11 @@ function montarVisor(fotos){
   document.body.append(visor);
   const img=visor.querySelector('img'), pie=visor.querySelector('figcaption');
   let actual=0, origen=null;
-  const precargar=i=>{ if(fotos[i]){ const p=new Image(); p.src=fotos[i]; } };
+  const precargar=i=>{ if(fotos[i]){ const p=new Image(); p.src=webp(fotos[i]); } };
   function mostrar(i){
     actual=(i+fotos.length)%fotos.length;
     img.classList.remove('lista');
-    const src=fotos[actual];
+    const src=webp(fotos[actual]);
     const listo=()=>{ if(img.src.endsWith(src.split('/').pop())) img.classList.add('lista'); };
     img.onload=listo; img.src=src; if(img.complete) listo();
     pie.textContent=`${actual+1} / ${fotos.length}`;
@@ -107,12 +145,22 @@ function montarVisor(fotos){
     if(e.key==='Escape') cerrar();
     else if(e.key==='ArrowRight') mostrar(actual+1);
     else if(e.key==='ArrowLeft') mostrar(actual-1);
+    else if(e.key==='Tab'){            // el foco circula entre los botones del visor
+      const f=[...visor.querySelectorAll('button')], i=f.indexOf(document.activeElement);
+      e.preventDefault(); f[(e.shiftKey?i-1+f.length:i+1)%f.length].focus();
+    }
   });
   // Deslizar en táctil.
   let x0=null;
   visor.addEventListener('pointerdown',e=>{ x0=e.clientX; },{passive:true});
   visor.addEventListener('pointerup',e=>{ if(x0===null) return; const dx=e.clientX-x0; x0=null; if(Math.abs(dx)>40) mostrar(actual+(dx<0?1:-1)); },{passive:true});
 }
+
+// El textarea del formulario crece con lo que escribís, sin barra.
+document.querySelectorAll('.contact-footer textarea').forEach(t=>{
+  const ajustar=()=>{ t.style.height='auto'; t.style.height=Math.max(110,t.scrollHeight)+'px'; };
+  t.addEventListener('input',ajustar); ajustar();
+});
 
 document.querySelectorAll('#year').forEach(el=>el.textContent=new Date().getFullYear());
 document.querySelectorAll('a[href="#contacto"]').forEach(a=>{
@@ -238,7 +286,7 @@ if(!reduced.matches&&matchMedia('(hover:hover) and (pointer:fine)').matches){
   });
 }
 
-document.querySelector('#contact-form')?.addEventListener('submit',event=>{event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;const name=form.elements.name.value.trim(),brand=form.elements.brand.value.trim(),message=form.elements.message.value.trim();if(!name||!message){document.querySelector('#form-note').textContent='Completá tu nombre y tu mensaje para continuar.';return;}const text=`Hola Daiana, soy ${name}.${brand?` Mi marca es ${brand}.`:''}\n\n${message}`;window.open(whatsappURL(text),'_blank','noopener,noreferrer');document.querySelector('#form-note').textContent='Tu consulta está preparada. Enviála desde WhatsApp para completar el contacto.';});
+document.querySelector('#contact-form')?.addEventListener('submit',event=>{event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;const name=form.elements.name.value.trim(),brand=(v=>v&&!/\s/.test(v)&&!v.startsWith('@')?'@'+v:v)(form.elements.brand.value.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i,'').replace(/\/$/,'')),message=form.elements.message.value.trim();if(!name||!message){document.querySelector('#form-note').textContent='Completá tu nombre y tu mensaje para continuar.';return;}const text=`Hola Daiana, soy ${name}.${brand?` Mi marca en Instagram es ${brand}.`:''}\n\n${message}`;window.open(whatsappURL(text),'_blank','noopener,noreferrer');document.querySelector('#form-note').textContent='Tu consulta está preparada. Enviála desde WhatsApp para completar el contacto.';});
 // One-time entrances: headings soften into focus, only short labels type in.
 const headingElements=document.querySelectorAll('h1,h2,.about-copy p');const labels=document.querySelectorAll('.eyebrow,.section-label');
 if(!reduced.matches&&'IntersectionObserver' in window){
@@ -270,7 +318,7 @@ function paintScreen(ctx,w,h){
     let x=w/2-(widths.reduce((a,b)=>a+b,0)-ls)/2;
     [...text].forEach((c,i)=>{ctx.fillText(c,x+widths[i]/2-ls/2,y);x+=widths[i];});
   };
-  spaced('DAIANA GUERRA',h*.20,9*k,3*k);
+  spaced('DG.CREANDO',h*.20,9*k,3*k);
   ctx.font=`500 ${44*k}px Montserrat, sans-serif`;
   ctx.fillText('Ideas',w/2,h*.345);
   ctx.fillText('que se',w/2,h*.345+48*k);
@@ -281,8 +329,8 @@ function paintScreen(ctx,w,h){
   ctx.beginPath();ctx.arc(w/2,cy,r,0,Math.PI*2);ctx.stroke();
   ctx.beginPath();ctx.moveTo(w/2-r*.28,cy-r*.34);ctx.lineTo(w/2+r*.38,cy);ctx.lineTo(w/2-r*.28,cy+r*.34);ctx.closePath();ctx.fill();
   ctx.fillStyle='rgba(24,24,24,.75)';
-  spaced('ESPACIO PARA TU VIDEO',h*.80,8*k,1.5*k);
-  spaced('VISTA PROVISIONAL',h*.80+13*k,8*k,1.5*k);
+  spaced('CONTENIDO QUE',h*.80,8*k,1.5*k);
+  spaced('SE MUEVE',h*.80+13*k,8*k,1.5*k);
 }
 function hasWebGL(){try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(e){return false;}}
 if(phoneSlot&&hasWebGL()){
@@ -296,6 +344,10 @@ if(phoneSlot&&hasWebGL()){
       maxDpr:fine?2:1.5
     });
     document.body.classList.add('has-phone-3d');
+    // Video del teléfono (por ahora apagado). Cuando llegue el definitivo:
+    // exportarlo vertical 9:19.5 sin audio, generar webm + mp4 (ver README,
+    // "Teléfono 3D") y descomentar:
+    // window.phone3d.setVideo([{src:'reel.webm',type:'video/webm'},{src:'reel.mp4',type:'video/mp4'}]);
   }).catch(()=>{});
   const boot=()=>(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(load);
   if(document.readyState==='complete')requestAnimationFrame(boot);
@@ -370,6 +422,15 @@ if(phoneSlot&&hasWebGL()){
   },{passive:true});
 })();
 
+// ── Precarga de los casos ────────────────────────────────────────────
+// Apenas el cursor entra en una tarjeta (o el dedo la toca), el navegador
+// empieza a bajar la página del caso; al hacer clic ya está en caché.
+document.querySelectorAll('.case-cover[href],.case-link[href]').forEach(a=>{
+  const pre=()=>{ if(a.dataset.pre) return; a.dataset.pre=1;
+    const l=document.createElement('link'); l.rel='prefetch'; l.href=a.getAttribute('href'); document.head.appendChild(l); };
+  a.addEventListener('pointerenter',pre,{passive:true}); a.addEventListener('touchstart',pre,{passive:true}); a.addEventListener('focus',pre);
+});
+
 // ── Loader y transición entre páginas ────────────────────────────────
 // El velo ya está en el HTML, así que cubre desde el primer pintado. Acá
 // solo se lo saca cuando la página terminó, y se lo vuelve a traer al
@@ -398,13 +459,16 @@ if(phoneSlot&&hasWebGL()){
     listo=true; pintar(1);
     setTimeout(()=>{
       document.body.classList.add('cargada');
-      setTimeout(()=>velo.classList.add('fuera'), suave?600:0);
-    }, suave?240:0);
+      setTimeout(()=>velo.classList.add('fuera'), suave?380:0);
+    }, suave?120:0);
   }
-  if(document.readyState==='complete') terminar();
-  else addEventListener('load',terminar);
+  // Se va cuando el HTML y las fuentes están listos: esperar a 'load' era
+  // esperar a la última foto de la página, y en los casos se notaba.
+  const listoParaMostrar=()=>(document.fonts&&document.fonts.ready?Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,800))]):Promise.resolve()).then(terminar);
+  if(document.readyState!=='loading') listoParaMostrar();
+  else addEventListener('DOMContentLoaded',listoParaMostrar,{once:true});
   // Red de seguridad: si algo no carga, el velo no se queda para siempre.
-  setTimeout(terminar,4000);
+  setTimeout(terminar,2500);
 
   // Volver con el botón atrás restaura la página desde caché: el velo
   // tiene que estar afuera, no tapando todo.
@@ -430,6 +494,6 @@ if(phoneSlot&&hasWebGL()){
     event.preventDefault();
     velo.classList.remove('fuera');
     document.body.classList.add('saliendo');
-    setTimeout(()=>{ location.href=destino.href; }, suave?320:0);
+    setTimeout(()=>{ scrollTo({top:0,left:0,behavior:'instant'}); location.href=destino.href; }, suave?320:0);
   });
 })();
