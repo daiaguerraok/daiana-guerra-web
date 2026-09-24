@@ -300,11 +300,25 @@ reduced.addEventListener('change',event=>{if(event.matches){document.querySelect
 document.querySelectorAll('.plan').forEach(card=>card.addEventListener('click',event=>{if(event.target.closest('a,button')||window.getSelection()?.toString())return;card.querySelector('.plan-contact').click();}));
 
 // ── Teléfono 3D del hero ─────────────────────────────────────────────
-// Mejora progresiva: si no hay WebGL o el módulo no carga, queda el
-// teléfono en CSS. Se carga después del load para no competir con el
-// primer pintado. Cuando llegue el video de Daiana:
-//   phone3d.setVideo('reel.mp4')   ·   mp4 H.264 vertical, idealmente 9:19.5
+// Mejora progresiva: si no hay WebGL o el módulo no carga, el video se
+// reproduce en el teléfono CSS. El 3D se carga después del primer pintado.
 const phoneSlot=document.querySelector('.phone-3d');
+const phoneVideoSources=[{src:'reel.webm',type:'video/webm'},{src:'reel.mp4',type:'video/mp4'}];
+function playPhoneFallback(){
+  const screen=document.querySelector('.hero .phone-screen');
+  if(!screen||screen.querySelector('video')) return;
+  const video=document.createElement('video');
+  video.autoplay=true; video.muted=true; video.defaultMuted=true;
+  video.loop=true; video.playsInline=true; video.preload='metadata';
+  video.setAttribute('muted',''); video.setAttribute('playsinline','');
+  video.setAttribute('aria-hidden','true'); video.poster='reel-poster.webp';
+  phoneVideoSources.forEach(({src,type})=>{
+    const source=document.createElement('source'); source.src=src; source.type=type;
+    video.append(source);
+  });
+  screen.append(video);
+  video.play().catch(()=>{});
+}
 // Dibuja la pantalla: mismo contenido que la versión CSS.
 function paintScreen(ctx,w,h){
   const k=w/210; // el teléfono en CSS mide 210px de pantalla
@@ -338,21 +352,19 @@ if(phoneSlot&&hasWebGL()){
   const load=()=>import('./phone-3d.js').then(({mountPhone})=>{
     window.phone3d=mountPhone(phoneSlot,{
       finish:'grafito',notch:'island',painter:paintScreen,
+      poster:'reel-poster.webp',
       fit:1.14,baseAngle:-0.14,shadow:false,drag:false,
       float:!reduced.matches,
       tilt:fine&&!reduced.matches,tiltYaw:.30,tiltPitch:.14,tiltEase:.06,
       maxDpr:fine?2:1.5
     });
     document.body.classList.add('has-phone-3d');
-    // Video del teléfono (por ahora apagado). Cuando llegue el definitivo:
-    // exportarlo vertical 9:19.5 sin audio, generar webm + mp4 (ver README,
-    // "Teléfono 3D") y descomentar:
-    // window.phone3d.setVideo([{src:'reel.webm',type:'video/webm'},{src:'reel.mp4',type:'video/mp4'}]);
-  }).catch(()=>{});
+    window.phone3d.setVideo(phoneVideoSources);
+  }).catch(playPhoneFallback);
   const boot=()=>(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(load);
   if(document.readyState==='complete')requestAnimationFrame(boot);
   else addEventListener('load',()=>requestAnimationFrame(boot),{once:true});
-}
+}else if(phoneSlot) playPhoneFallback();
 
 // ── Scroll suave con inercia ─────────────────────────────────────────
 // Interpola la posición real de scroll en vez de transformar un wrapper:
