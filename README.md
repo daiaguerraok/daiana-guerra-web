@@ -29,6 +29,9 @@ Cada caso del portfolio abre su propia página. Para sumar uno nuevo, se copia
 style.css            todo el sitio
 script.js            planes, menú, formulario, movimiento y loader
 phone-3d.js          mockup 3D del hero (bundle con Three.js adentro)
+reel.webm            video del teléfono, VP9 sin audio
+reel.mp4             respaldo H.264 sin audio
+reel-poster.webp     imagen mientras carga el video
 logo-dgcreando.svg
 montserrat.woff2     fuentes locales (subconjunto latino, licencias OFL)
 great-vibes.woff2
@@ -62,19 +65,19 @@ pierden, porque la imagen se desplaza con el scroll.
 
 **Teléfono 3D del hero.** `phone-3d.js` monta un mockup en Three.js que sigue
 el mouse. Es mejora progresiva: se carga después del `load` y, si el navegador
-no soporta WebGL, queda el teléfono dibujado en CSS. El canvas no recibe
-eventos, así que nunca tapa el botón del hero. Puede reproducir un video en la
-pantalla (hoy está apagado; la línea está comentada en `script.js`, sección
-"Teléfono 3D"). Para activarlo, con el video listo:
+no soporta WebGL, el video se reproduce en el teléfono dibujado en CSS. El
+canvas no recibe eventos, así que nunca tapa el botón del hero. El video actual
+se reproduce mudo y en loop; el navegador elige WebM o MP4. Para reemplazarlo:
 
 ```bash
-# recorta a vertical 9:19.5, 540 px de ancho, sin audio; webm liviano + mp4 de respaldo
-ffmpeg -i original.mp4 -an -vf "crop=ih*9/19.5:ih,scale=540:-2" -c:v libx264 -profile:v main -pix_fmt yuv420p -crf 26 -movflags +faststart reel.mp4
+# recorta al centro a 9:19.5, 540 px de ancho, sin audio
+ffmpeg -i original.mp4 -an -vf "crop=trunc(ih*9/19.5/2)*2:ih,scale=540:1170" -c:v libx264 -profile:v main -pix_fmt yuv420p -crf 26 -movflags +faststart reel.mp4
 ffmpeg -i reel.mp4 -an -c:v libvpx-vp9 -b:v 0 -crf 34 reel.webm
+ffmpeg -ss 1 -i reel.mp4 -frames:v 1 -c:v libwebp -quality 78 reel-poster.webp
 ```
 
-Se suben los dos a la raíz y se descomenta `phone3d.setVideo(...)`. Queda
-mudo y en loop; el navegador elige webm si puede.
+Se suben los tres a la raíz con esos nombres. La fuente ya está conectada en
+`script.js`, sección "Teléfono 3D".
 
 **Movimiento.** El scroll tiene inercia propia (solo con mouse o trackpad; en
 táctil queda el nativo). Los casos y las fotos suben al entrar en pantalla,

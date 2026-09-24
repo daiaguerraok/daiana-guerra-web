@@ -9,6 +9,12 @@
   Cache-Control: public, max-age=2592000
 /phone-3d.js
   Cache-Control: public, max-age=604800
+/reel.mp4
+  Cache-Control: public, max-age=2592000
+/reel.webm
+  Cache-Control: public, max-age=2592000
+/reel-poster.webp
+  Cache-Control: public, max-age=2592000
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
 /style.css
