@@ -7,6 +7,9 @@
 //   se mueve de una lista a otra. Para agregar uno, se escribe en la lista.
 // - Las zonas son aproximadas: no son kilómetros ni tiempos de viaje reales.
 
+// Precios de la zona cerca, que también usan Piriápolis y Pan de Azúcar
+const PRECIOS_CERCA = { 2: 4500, 3: 6000, 4: 7500 };
+
 window.CALCULADORA = {
   sena: 0.30,
 
@@ -16,7 +19,7 @@ window.CALCULADORA = {
     {
       id: 'mvd-cerca',
       nombre: 'Montevideo cerca',
-      precios: { 2: 4500, 3: 6000, 4: 7500 },
+      precios: PRECIOS_CERCA,
       lugares: [
         'Arroyo Seco', 'Aguada', 'Centro', 'Cordón', 'Ciudad Vieja', 'Reducto',
         'Goes', 'La Comercial', 'Barrio Sur', 'Palermo', 'Tres Cruces',
@@ -64,7 +67,13 @@ window.CALCULADORA = {
       id: 'maldonado',
       nombre: 'Maldonado y alrededores',
       precios: { 2: 9000, 3: 10500, 4: 12000 },
-      lugares: ['Piriápolis', 'Maldonado', 'Punta del Este', 'San Carlos']
+      lugares: ['Maldonado', 'Punta del Este', 'San Carlos']
+    },
+    {
+      id: 'piriapolis',
+      nombre: 'Piriápolis y Pan de Azúcar',
+      precios: PRECIOS_CERCA,
+      lugares: ['Piriápolis', 'Pan de Azúcar']
     }
   ],
 
