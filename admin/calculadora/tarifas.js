@@ -78,20 +78,36 @@ window.CALCULADORA = {
     }
   ],
 
-  // Lo que incluyen todas las coberturas, en el orden del mensaje
-  incluye: [
-    'Fotos de la decoración.',
-    'Fotos en la torta con los invitados a medida que van llegando.',
-    'Mini sesión al cumpleañer@.',
-    'Captura de juegos y momentos espontáneos.',
-    'Se entregan todas las fotos sacadas + edición incluida.'
-  ],
-
-  // Lo que se suma al final según las horas de cobertura
-  incluyePorHoras: {
-    2: ['Si la cobertura no llega al feliz cumpleaños, prendemos la velita y sacamos fotos con los padres soplándola, para que tengan el recuerdo de ese momento.'],
-    3: ['Si la cobertura no llega al feliz cumpleaños, prendemos la velita y sacamos fotos con los padres soplándola, para que tengan el recuerdo de ese momento.'],
-    4: ['Cobertura del momento de cantar el feliz cumpleaños.']
+  // Lo que incluye cada cobertura, por cantidad de horas, en el orden del mensaje
+  incluye: {
+    2: [
+      'Fotos de la decoración.',
+      'Fotos en la torta con los invitados a medida que van llegando.',
+      'Mini sesión al cumpleañer@.',
+      'Captura de juegos y momentos espontáneos.',
+      'Se entregan todas las fotos sacadas + edición incluida.',
+      'Si la cobertura no llega al feliz cumpleaños, prendemos la velita y sacamos fotos con los padres soplándola, para que tengan el recuerdo de ese momento.'
+    ],
+    3: [
+      'Fotos de la decoración.',
+      'Fotos en la torta con los invitados a medida que van llegando.',
+      'Mini sesión al cumpleañer@.',
+      'Captura de juegos y momentos espontáneos.',
+      'Se entregan todas las fotos sacadas + edición incluida.',
+      'Si la cobertura no llega al feliz cumpleaños, prendemos la velita y sacamos fotos con los padres soplándola, para que tengan el recuerdo de ese momento.'
+    ],
+    4: [
+      'Fotos de la decoración y todos los detalles del cumpleaños.',
+      'Fotos en la torta con los invitados a medida que van llegando.',
+      'Mini sesión de fotos al cumpleañer@.',
+      'Sesión del cumpleañer@ con sus padres, hermanos, abuelos y familiares.',
+      'Fotos grupales con amigos e invitados.',
+      'Cobertura de juegos, actividades y momentos espontáneos.',
+      'Captura de abrazos, risas y momentos especiales.',
+      'Cobertura del momento de la torta, el feliz cumpleaños y el soplado de velitas (si ocurre durante el horario contratado).',
+      'Fotos del festejo desde la llegada de los invitados hasta los momentos finales de la cobertura.',
+      'Entrega de todas las fotografías seleccionadas, con edición incluida.'
+    ]
   },
 
   // Textos del mensaje que se copia para WhatsApp. *texto* sale en negrita.
