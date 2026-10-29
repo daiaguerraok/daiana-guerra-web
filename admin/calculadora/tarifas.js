@@ -78,15 +78,22 @@ window.CALCULADORA = {
     }
   ],
 
+  // Lo que incluyen todas las coberturas
   incluye: [
     'Fotografías de la decoración',
     'Fotografías de los invitados',
     'Mini sesión al cumpleañero',
     'Cobertura de juegos y momentos espontáneos',
-    'Fotografías del momento de la torta',
-    'Selección y edición de las mejores fotografías',
-    'Entrega digital en alta resolución'
+    'Entrega de todas las fotos sacadas, con edición incluida',
+    'Entrega digital en alta resolución en menos de 5 días'
   ],
+
+  // Lo que se suma según las horas de cobertura
+  incluyePorHoras: {
+    2: ['Si la cobertura no llega al feliz cumpleaños, prendemos la velita y sacamos fotos con los padres soplándola, para que tengan el recuerdo de ese momento'],
+    3: ['Si la cobertura no llega al feliz cumpleaños, prendemos la velita y sacamos fotos con los padres soplándola, para que tengan el recuerdo de ese momento'],
+    4: ['Cobertura del momento de cantar el feliz cumpleaños']
+  },
 
   // Textos del mensaje que se copia para WhatsApp. *texto* sale en negrita.
   mensaje: {
