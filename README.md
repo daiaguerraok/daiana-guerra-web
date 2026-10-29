@@ -149,11 +149,12 @@ functions/admin/_middleware.js     pide la contraseña en /admin/*
 hora de cobertura y su lista de `lugares`; para cambiar un barrio de zona se
 mueve de una lista a otra.
 
-**Acceso:** pide contraseña. La contraseña no está en el código: es la
-variable `ADMIN_PASSWORD` del proyecto en Cloudflare Pages (Settings >
-Variables and Secrets, tipo Secret). Sin esa variable responde 403. Al entrar
-queda la sesión abierta 30 días en ese navegador; cambiar la contraseña cierra
-todas las sesiones, y `/admin/salir` cierra la propia.
+**Acceso:** pide la contraseña `daianita`. En el código está solo su huella
+SHA-256 (`CLAVE_SHA256` en `functions/admin/_middleware.js`); para cambiarla
+se reemplaza por la de la clave nueva (`printf 'clave' | sha256sum`), o se
+carga la variable `ADMIN_PASSWORD` en Cloudflare Pages, que tiene prioridad.
+Al entrar queda la sesión abierta 30 días en ese navegador; `/admin/salir` la
+cierra. Es una protección liviana: alcanza para que los clientes no entren.
 
 ## Fotos livianas
 

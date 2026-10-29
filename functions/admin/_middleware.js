@@ -1,12 +1,14 @@
 // Protección de /admin/* con contraseña (Cloudflare Pages Functions).
 //
-// La contraseña no está en el código: se guarda en Cloudflare como la variable
-// ADMIN_PASSWORD (Pages > Settings > Variables and Secrets, tipo Secret).
-// Sin esa variable no se sirve nada.
+// La contraseña es "daianita". Acá se guarda su huella SHA-256, no el texto.
+// Para cambiarla sin tocar el código, se carga la variable ADMIN_PASSWORD en
+// Cloudflare (Pages > Settings > Variables and Secrets) y tiene prioridad.
+// Huella de una clave nueva:  printf 'clave' | sha256sum
 //
 // Al entrar bien, queda una cookie firmada por 30 días. Cambiar la contraseña
 // cierra todas las sesiones abiertas. /admin/salir cierra la sesión.
 
+const CLAVE_SHA256 = '7b5330b813b7aceda3bb149ea42a60778a237da7a6717764a9cd9d65eb47b773';
 const COOKIE = 'dg_admin';
 const DIAS = 30;
 const enc = new TextEncoder();
@@ -42,9 +44,11 @@ export async function sesionValida(valor, secret, now = Date.now()) {
   return iguales(firma, await hmac(secret, `admin|${exp}`));
 }
 
-export async function claveCorrecta(intento, secret) {
-  // Se comparan los HMAC para que el largo de la clave no se note en el tiempo
-  return iguales(await hmac(secret, `clave|${intento}`), await hmac(secret, `clave|${secret}`));
+const sha256 = async texto => hex(await crypto.subtle.digest('SHA-256', enc.encode(texto)));
+
+export async function claveCorrecta(intento, env) {
+  if (env.ADMIN_PASSWORD) return iguales(await sha256(intento), await sha256(env.ADMIN_PASSWORD));
+  return iguales(await sha256(intento), CLAVE_SHA256);
 }
 
 const leerCookie = (request, nombre) => {
@@ -83,8 +87,8 @@ const redirigir = (location, setCookie) =>
   new Response(null, { status: 303, headers: { ...NO_INDEX, Location: location, 'Set-Cookie': setCookie } });
 
 export async function onRequest({ request, env, next }) {
-  const secret = env.ADMIN_PASSWORD || '';
-  if (!secret) return new Response('Acceso no configurado.', { status: 403, headers: { ...NO_INDEX, 'Content-Type': 'text/plain; charset=utf-8' } });
+  // Firma de la cookie: cambia si cambia la contraseña, y cierra las sesiones viejas
+  const secret = `${env.ADMIN_PASSWORD || ''}|${CLAVE_SHA256}`;
 
   const url = new URL(request.url);
   if (url.pathname.replace(/\/+$/, '') === '/admin/salir') {
@@ -101,7 +105,7 @@ export async function onRequest({ request, env, next }) {
   if (request.method === 'POST') {
     const form = await request.formData().catch(() => null);
     const intento = String(form?.get('clave') || '');
-    if (intento && await claveCorrecta(intento, secret)) {
+    if (intento && await claveCorrecta(intento, env)) {
       const exp = Date.now() + DIAS * 864e5;
       return redirigir(url.pathname + url.search, cookie(await firmar(secret, exp), DIAS * 86400));
     }
