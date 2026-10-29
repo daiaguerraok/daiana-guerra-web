@@ -51,13 +51,12 @@
     }
     if (!nombreLugar || !zona || !zona.precios[h]) return { zona, nombreLugar, h };
     const total = zona.precios[h];
-    const sena = Math.round(total * C.sena);
+    const sena = Math.min(C.sena, total);
     return { zona, nombreLugar, h, total, sena, saldo: total - sena, cliente: cliente.value.trim() };
   }
 
   function mensaje(p) {
     const m = C.mensaje;
-    const pctSena = Math.round(C.sena * 100);
     return [
       m.saludo.replace('{cliente}', p.cliente ? `, ${p.cliente}` : ''),
       m.intro,
@@ -70,8 +69,8 @@
       ...C.incluye.map(t => `• ${t}`),
       '',
       m.sena,
-      `• Seña (${pctSena}%): ${plata(p.sena)}`,
-      `• Saldo restante (${100 - pctSena}%): ${plata(p.saldo)}`,
+      `• Seña: ${plata(p.sena)}`,
+      `• Saldo restante: ${plata(p.saldo)}`,
       '',
       m.cierre,
       m.firma

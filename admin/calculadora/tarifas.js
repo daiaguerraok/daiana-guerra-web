@@ -11,7 +11,8 @@
 const PRECIOS_CERCA = { 2: 4500, 3: 6000, 4: 7500 };
 
 window.CALCULADORA = {
-  sena: 0.30,
+  // Seña fija en pesos, igual para todos los presupuestos
+  sena: 500,
 
   horas: [2, 3, 4],
 
@@ -91,7 +92,7 @@ window.CALCULADORA = {
   mensaje: {
     saludo: '¡Hola{cliente}! Gracias por escribirme.',
     intro: 'Te paso el presupuesto para la cobertura fotográfica del cumpleaños:',
-    sena: 'Para reservar la fecha se abona una seña del 30%.',
+    sena: 'Para reservar la fecha se abona una seña.',
     cierre: 'Cualquier duda me escribís. ¡Va a quedar hermoso!',
     firma: 'Daiana Guerra · dg.creando'
   }
