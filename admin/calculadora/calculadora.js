@@ -34,7 +34,7 @@
   };
   C.zonas.forEach(z => otroZona.append(radio('otro-zona', z.id, z.nombre)));
   C.horas.forEach((h, i) => horas.append(radio('horas', h, `${h} horas`, i === 0)));
-  const incluye = h => [...C.incluye, ...(C.incluyePorHoras?.[h] || [])];
+  const incluye = h => C.incluye[h] || [];
   function listarIncluye(h) {
     $('incluye').replaceChildren(...incluye(h).map(t => {
       const li = document.createElement('li');
