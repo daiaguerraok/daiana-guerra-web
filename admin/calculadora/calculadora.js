@@ -34,11 +34,14 @@
   };
   C.zonas.forEach(z => otroZona.append(radio('otro-zona', z.id, z.nombre)));
   C.horas.forEach((h, i) => horas.append(radio('horas', h, `${h} horas`, i === 0)));
-  C.incluye.forEach(t => {
-    const li = document.createElement('li');
-    li.textContent = t;
-    $('incluye').append(li);
-  });
+  const incluye = h => [...C.incluye, ...(C.incluyePorHoras?.[h] || [])];
+  function listarIncluye(h) {
+    $('incluye').replaceChildren(...incluye(h).map(t => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      return li;
+    }));
+  }
 
   const valorRadio = name => form.querySelector(`input[name="${name}"]:checked`)?.value;
 
@@ -66,7 +69,7 @@
       `💰 *Total:* ${plata(p.total)}`,
       '',
       '*Incluye:*',
-      ...C.incluye.map(t => `• ${t}`),
+      ...incluye(p.h).map(t => `• ${t}`),
       '',
       m.sena,
       `• Seña: ${plata(p.sena)}`,
@@ -87,6 +90,7 @@
   function render() {
     const p = estado();
     otro.hidden = lugar.value !== OTRO;
+    listarIncluye(p.h);
     $('zona-note').textContent = p.zona
       ? `Zona: ${p.zona.nombre}. La tarifa ya incluye el traslado estimado.`
       : '';
