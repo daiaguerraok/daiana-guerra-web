@@ -82,7 +82,7 @@ window.CALCULADORA = {
   incluye: [
     'Fotos de la decoración.',
     'Fotos en la torta con los invitados a medida que van llegando.',
-    'Mini sesión al cumpleañero.',
+    'Mini sesión al cumpleañer@.',
     'Captura de juegos y momentos espontáneos.',
     'Se entregan todas las fotos sacadas + edición incluida.'
   ],
