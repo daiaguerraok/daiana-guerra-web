@@ -21,8 +21,10 @@ window.CALCULADORA = {
         'Arroyo Seco', 'Aguada', 'Centro', 'Cordón', 'Ciudad Vieja', 'Reducto',
         'Goes', 'La Comercial', 'Barrio Sur', 'Palermo', 'Tres Cruces',
         'Parque Rodó', 'Brazo Oriental',
-        // agregados: limitan con Arroyo Seco o quedan a pocas cuadras
-        'Bella Vista', 'Capurro', 'Villa Muñoz', 'Jacinto Vera'
+        // limitan con Arroyo Seco
+        'Prado', 'Bella Vista', 'Capurro',
+        // agregados: a pocas cuadras
+        'Villa Muñoz', 'Jacinto Vera'
       ]
     },
     {
@@ -30,7 +32,7 @@ window.CALCULADORA = {
       nombre: 'Montevideo distancia media',
       precios: { 2: 5000, 3: 6500, 4: 8000 },
       lugares: [
-        'Pocitos', 'Prado', 'Parque Batlle', 'La Blanqueada', 'Buceo', 'Malvín',
+        'Pocitos', 'Parque Batlle', 'La Blanqueada', 'Buceo', 'Malvín',
         'Unión', 'Atahualpa', 'La Teja', 'Belvedere', 'Cerro',
         // agregados
         'Punta Carretas', 'Villa Dolores', 'Larrañaga', 'Aires Puros',
