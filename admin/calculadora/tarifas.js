@@ -89,12 +89,13 @@ window.CALCULADORA = {
       'Si la cobertura no llega al feliz cumpleaños, prendemos la velita y sacamos fotos con los padres soplándola, para que tengan el recuerdo de ese momento.'
     ],
     3: [
-      'Fotos de la decoración.',
+      'Fotos de la decoración y todos los detalles del cumpleaños.',
       'Fotos en la torta con los invitados a medida que van llegando.',
-      'Mini sesión al cumpleañer@.',
-      'Captura de juegos y momentos espontáneos.',
-      'Se entregan todas las fotos sacadas + edición incluida.',
-      'Si la cobertura no llega al feliz cumpleaños, prendemos la velita y sacamos fotos con los padres soplándola, para que tengan el recuerdo de ese momento.'
+      'Mini sesión de fotos al cumpleañer@.',
+      'Sesión del cumpleañer@ con sus padres, hermanos, abuelos y familiares.',
+      'Cobertura de juegos, actividades y momentos espontáneos.',
+      'Cobertura del momento de la torta, el feliz cumpleaños y el soplado de velitas (si ocurre durante el horario contratado).',
+      'Entrega de todas las fotografías seleccionadas, con edición incluida.'
     ],
     4: [
       'Fotos de la decoración y todos los detalles del cumpleaños.',
