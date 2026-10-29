@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es-UY">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#090909">
+<title>Presupuestos · dg.creando</title>
+<link rel="stylesheet" href="calculadora.css">
+</head>
+<body>
+<main class="calc">
+  <header class="calc-head">
+    <img class="calc-logo" src="../../logo-dgcreando.svg" alt="dg.creando" width="1008" height="190">
+    <p class="calc-label">USO INTERNO · CUMPLEAÑOS INFANTILES</p>
+    <h1>Calculadora de <em>presupuestos</em></h1>
+  </header>
+
+  <form class="calc-grid" id="calc-form" autocomplete="off" novalidate>
+    <section class="card">
+      <h2 class="card-title"><span>01</span> Datos</h2>
+
+      <label for="cliente">Nombre del cliente <small>(opcional)</small></label>
+      <input id="cliente" name="cliente" placeholder="Ej.: Lucía" maxlength="80">
+
+      <label for="lugar">Barrio o localidad</label>
+      <div class="select">
+        <select id="lugar" name="lugar" required>
+          <option value="" selected disabled>Elegí el lugar del cumpleaños</option>
+        </select>
+      </div>
+
+      <div class="otro" id="otro" hidden>
+        <label for="otro-lugar">Lugar</label>
+        <input id="otro-lugar" name="otro-lugar" placeholder="Ej.: Sauce, Canelones" maxlength="80">
+        <p class="field-label" id="otro-zona-label">Zona de distancia</p>
+        <div class="chips" id="otro-zona" role="radiogroup" aria-labelledby="otro-zona-label"></div>
+      </div>
+
+      <p class="field-label" id="horas-label">Cobertura</p>
+      <div class="segmented" id="horas" role="radiogroup" aria-labelledby="horas-label"></div>
+
+      <p class="zona-note" id="zona-note" aria-live="polite"></p>
+    </section>
+
+    <section class="card card-result" aria-live="polite">
+      <h2 class="card-title"><span>02</span> Presupuesto</h2>
+      <div class="total">
+        <span class="total-label">Total</span>
+        <strong id="total">—</strong>
+        <span class="total-meta" id="resumen">Elegí el lugar para calcular.</span>
+      </div>
+      <dl class="split">
+        <div><dt>Seña 30%</dt><dd id="sena">—</dd></div>
+        <div><dt>Saldo 70%</dt><dd id="saldo">—</dd></div>
+      </dl>
+      <h3 class="list-title">Incluye</h3>
+      <ul class="incluye" id="incluye"></ul>
+    </section>
+
+    <section class="card card-msg">
+      <h2 class="card-title"><span>03</span> Mensaje para WhatsApp</h2>
+      <pre class="mensaje" id="mensaje">Completá el lugar y las horas para armar el mensaje.</pre>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="copiar" disabled>Copiar presupuesto</button>
+        <button type="reset" class="btn btn-ghost" id="nueva">Nueva cotización</button>
+      </div>
+    </section>
+  </form>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="tarifas.js"></script>
+<script src="calculadora.js"></script>
+</body>
+</html>

@@ -131,6 +131,29 @@ inercia, ni desplazamientos, ni transiciones.
 `script.js` corre en todas las páginas y tiene guardas para lo que solo existe
 en la home. Al agregar algo nuevo, conviene mantener esa precaución.
 
+## Calculadora de presupuestos (uso interno)
+
+`/admin/calculadora/` calcula el presupuesto de cumpleaños infantiles según
+el lugar y las horas, y arma el mensaje para WhatsApp. No tiene enlaces desde
+el sitio y no se indexa (`noindex` en la página y en `_headers`).
+
+```
+admin/calculadora/index.html       la página
+admin/calculadora/tarifas.js       precios, lugares por zona, servicios y textos del mensaje
+admin/calculadora/calculadora.js   cálculo y copiado
+admin/calculadora/calculadora.css  estilos propios (no toca style.css)
+functions/admin/_middleware.js     verifica el login de Cloudflare Access en /admin/*
+```
+
+**Tarifas y lugares:** solo `tarifas.js`. Cada zona tiene sus `precios` por
+hora de cobertura y su lista de `lugares`; para cambiar un barrio de zona se
+mueve de una lista a otra.
+
+**Acceso:** lo protege Cloudflare Access. La función de `functions/admin/`
+vuelve a verificar el token y, si Access o sus variables
+(`ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`, `ADMIN_EMAILS`) no están configurados,
+responde 403: sin configurar, la calculadora no se ve, ni siquiera para Daiana.
+
 ## Fotos livianas
 
 Cada `.jpg` tiene al lado un `.webp` y versiones `-480.webp` y `-960.webp`;
