@@ -1,93 +1,114 @@
-// Protección de /admin/* (Cloudflare Pages Functions).
+// Protección de /admin/* con contraseña (Cloudflare Pages Functions).
 //
-// Cloudflare Access pide el login antes de llegar acá y agrega el token
-// Cf-Access-Jwt-Assertion. Esta función lo verifica de nuevo: firma, audiencia,
-// emisor, vencimiento y correo. Si Access no está configurado para el dominio
-// que se visita, o faltan las variables de entorno, no se sirve nada.
+// La contraseña no está en el código: se guarda en Cloudflare como la variable
+// ADMIN_PASSWORD (Pages > Settings > Variables and Secrets, tipo Secret).
+// Sin esa variable no se sirve nada.
 //
-// Variables de entorno (Pages > Settings > Variables and Secrets):
-//   ACCESS_TEAM_DOMAIN  ej. dgcreando.cloudflareaccess.com
-//   ACCESS_AUD          el "Application Audience (AUD) Tag" de la app de Access
-//   ADMIN_EMAILS        correos autorizados, separados por coma
+// Al entrar bien, queda una cookie firmada por 30 días. Cambiar la contraseña
+// cierra todas las sesiones abiertas. /admin/salir cierra la sesión.
 
-const CERTS_TTL = 60 * 60 * 1000;
-let certsCache = { url: '', keys: null, at: 0 };
+const COOKIE = 'dg_admin';
+const DIAS = 30;
+const enc = new TextEncoder();
 
-const deny = (status, msg) => new Response(msg, {
-  status,
-  headers: {
-    'Content-Type': 'text/plain; charset=utf-8',
-    'Cache-Control': 'no-store',
-    'X-Robots-Tag': 'noindex, nofollow'
-  }
-});
-
-const b64url = s => {
-  const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(s.length / 4) * 4, '='));
-  return Uint8Array.from(bin, c => c.charCodeAt(0));
+const NO_INDEX = {
+  'Cache-Control': 'no-store',
+  'X-Robots-Tag': 'noindex, nofollow, noarchive',
+  'Referrer-Policy': 'no-referrer'
 };
-const json = s => JSON.parse(new TextDecoder().decode(b64url(s)));
 
-async function getKeys(issuer, force) {
-  const url = `${issuer}/cdn-cgi/access/certs`;
-  if (!force && certsCache.url === url && certsCache.keys && Date.now() - certsCache.at < CERTS_TTL) return certsCache.keys;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`certs ${res.status}`);
-  const { keys } = await res.json();
-  certsCache = { url, keys, at: Date.now() };
-  return keys;
+const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+
+async function hmac(secret, data) {
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return hex(await crypto.subtle.sign('HMAC', key, enc.encode(data)));
 }
 
-export async function verifyAccessJwt(token, { issuer, aud, emails, now = Date.now() }) {
-  const parts = token.split('.');
-  if (parts.length !== 3) return null;
-  const [h, p, s] = parts;
-  let header, payload;
-  try {
-    header = json(h);
-    payload = json(p);
-  } catch {
-    return null;
-  }
-  if (header.alg !== 'RS256') return null;
-
-  let jwk = (await getKeys(issuer)).find(k => k.kid === header.kid);
-  if (!jwk) jwk = (await getKeys(issuer, true)).find(k => k.kid === header.kid);
-  if (!jwk) return null;
-
-  const key = await crypto.subtle.importKey('jwk', jwk, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
-  const ok = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, b64url(s), new TextEncoder().encode(`${h}.${p}`));
-  if (!ok) return null;
-
-  const secs = now / 1000;
-  const auds = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
-  if (payload.iss !== issuer || !auds.includes(aud)) return null;
-  if (typeof payload.exp !== 'number' || payload.exp < secs) return null;
-  if (typeof payload.nbf === 'number' && payload.nbf > secs + 60) return null;
-  if (!payload.email || !emails.includes(String(payload.email).toLowerCase())) return null;
-  return payload;
+// Compara sin cortar en la primera diferencia
+function iguales(a, b) {
+  if (a.length !== b.length) return false;
+  let d = 0;
+  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
 }
+
+async function firmar(secret, exp) {
+  return `${exp}.${await hmac(secret, `admin|${exp}`)}`;
+}
+
+export async function sesionValida(valor, secret, now = Date.now()) {
+  const [exp, firma] = (valor || '').split('.');
+  if (!exp || !firma || !/^\d+$/.test(exp) || Number(exp) < now) return false;
+  return iguales(firma, await hmac(secret, `admin|${exp}`));
+}
+
+export async function claveCorrecta(intento, secret) {
+  // Se comparan los HMAC para que el largo de la clave no se note en el tiempo
+  return iguales(await hmac(secret, `clave|${intento}`), await hmac(secret, `clave|${secret}`));
+}
+
+const leerCookie = (request, nombre) => {
+  const m = (request.headers.get('Cookie') || '').match(new RegExp(`(?:^|;\\s*)${nombre}=([^;]*)`));
+  return m ? m[1] : '';
+};
+
+const cookie = (valor, maxAge) =>
+  `${COOKIE}=${valor}; Path=/admin; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Strict`;
+
+function pantalla(error, status) {
+  const html = `<!doctype html><html lang="es-UY"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><title>Ingresar · dg.creando</title>
+<style>
+@font-face{font-family:Montserrat;src:url('/montserrat.woff2') format('woff2');font-weight:100 900;font-display:swap}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:#090909;color:#f4f3f0;font-family:Montserrat,system-ui,sans-serif}
+form{width:100%;max-width:360px;background:#131313;border:1px solid #2a2a2a;border-radius:22px;padding:28px}
+img{height:20px;display:block;margin-bottom:24px;opacity:.9}
+label{display:block;margin-bottom:8px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9a9893}
+input{width:100%;min-height:52px;background:#1b1b1b;border:1px solid #2a2a2a;border-radius:14px;padding:13px 16px;font:inherit;font-size:16px;color:inherit;outline:none}
+input:focus{border-color:#3a3a3a}
+button{width:100%;min-height:52px;margin-top:14px;border:0;border-radius:40px;background:#f4f3f0;color:#111;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+button:active{transform:scale(.98)}
+p{margin:12px 0 0;font-size:13px;color:#e38b7d}
+</style></head><body>
+<form method="post"><img src="/logo-dgcreando.svg" alt="dg.creando">
+<label for="clave">Contraseña</label>
+<input id="clave" name="clave" type="password" autocomplete="current-password" autofocus required>
+<button type="submit">Entrar</button>${error ? `<p role="alert">${error}</p>` : ''}
+</form></body></html>`;
+  return new Response(html, { status, headers: { ...NO_INDEX, 'Content-Type': 'text/html; charset=utf-8' } });
+}
+
+const redirigir = (location, setCookie) =>
+  new Response(null, { status: 303, headers: { ...NO_INDEX, Location: location, 'Set-Cookie': setCookie } });
 
 export async function onRequest({ request, env, next }) {
-  const team = (env.ACCESS_TEAM_DOMAIN || '').trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
-  const aud = (env.ACCESS_AUD || '').trim();
-  const emails = (env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
-  if (!team || !aud || !emails.length) return deny(403, 'Acceso no configurado.');
+  const secret = env.ADMIN_PASSWORD || '';
+  if (!secret) return new Response('Acceso no configurado.', { status: 403, headers: { ...NO_INDEX, 'Content-Type': 'text/plain; charset=utf-8' } });
 
-  const token = request.headers.get('Cf-Access-Jwt-Assertion');
-  if (!token) return deny(403, 'Acceso restringido.');
-
-  let payload = null;
-  try {
-    payload = await verifyAccessJwt(token, { issuer: `https://${team}`, aud, emails });
-  } catch {
-    return deny(503, 'No se pudo verificar el acceso. Probá de nuevo en un momento.');
+  const url = new URL(request.url);
+  if (url.pathname.replace(/\/+$/, '') === '/admin/salir') {
+    return redirigir('/admin/calculadora/', cookie('', 0));
   }
-  if (!payload) return deny(403, 'Acceso restringido.');
 
-  const res = await next();
-  const out = new Response(res.body, res);
-  out.headers.set('Cache-Control', 'no-store');
-  out.headers.set('X-Robots-Tag', 'noindex, nofollow');
-  return out;
+  if (await sesionValida(leerCookie(request, COOKIE), secret)) {
+    const res = await next();
+    const out = new Response(res.body, res);
+    for (const [k, v] of Object.entries(NO_INDEX)) out.headers.set(k, v);
+    return out;
+  }
+
+  if (request.method === 'POST') {
+    const form = await request.formData().catch(() => null);
+    const intento = String(form?.get('clave') || '');
+    if (intento && await claveCorrecta(intento, secret)) {
+      const exp = Date.now() + DIAS * 864e5;
+      return redirigir(url.pathname + url.search, cookie(await firmar(secret, exp), DIAS * 86400));
+    }
+    // Frena un poco los intentos seguidos
+    await new Promise(r => setTimeout(r, 800));
+    return pantalla('Contraseña incorrecta.', 401);
+  }
+
+  return pantalla('', 401);
 }

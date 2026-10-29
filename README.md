@@ -142,17 +142,18 @@ admin/calculadora/index.html       la página
 admin/calculadora/tarifas.js       precios, lugares por zona, servicios y textos del mensaje
 admin/calculadora/calculadora.js   cálculo y copiado
 admin/calculadora/calculadora.css  estilos propios (no toca style.css)
-functions/admin/_middleware.js     verifica el login de Cloudflare Access en /admin/*
+functions/admin/_middleware.js     pide la contraseña en /admin/*
 ```
 
 **Tarifas y lugares:** solo `tarifas.js`. Cada zona tiene sus `precios` por
 hora de cobertura y su lista de `lugares`; para cambiar un barrio de zona se
 mueve de una lista a otra.
 
-**Acceso:** lo protege Cloudflare Access. La función de `functions/admin/`
-vuelve a verificar el token y, si Access o sus variables
-(`ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`, `ADMIN_EMAILS`) no están configurados,
-responde 403: sin configurar, la calculadora no se ve, ni siquiera para Daiana.
+**Acceso:** pide contraseña. La contraseña no está en el código: es la
+variable `ADMIN_PASSWORD` del proyecto en Cloudflare Pages (Settings >
+Variables and Secrets, tipo Secret). Sin esa variable responde 403. Al entrar
+queda la sesión abierta 30 días en ese navegador; cambiar la contraseña cierra
+todas las sesiones, y `/admin/salir` cierra la propia.
 
 ## Fotos livianas
 
