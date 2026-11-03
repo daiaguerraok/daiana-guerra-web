@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es-UY">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#090909">
+<title>Sorteos · dg.creando</title>
+<link rel="stylesheet" href="sorteo.css">
+</head>
+<body>
+<main class="app">
+  <header class="head">
+    <div class="top">
+      <img class="logo" src="../../logo-dgcreando.svg" alt="dg.creando" width="1008" height="190">
+      <a class="salir" href="/admin/salir">Salir</a>
+    </div>
+    <p class="label">USO INTERNO · INSTAGRAM</p>
+    <h1>Sorteo entre <em>comentarios</em></h1>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2 class="card-title"><span>01</span> Comentarios</h2>
+      <details class="ayuda">
+        <summary>¿Cómo copio los comentarios?</summary>
+        <ol>
+          <li>Abrí el posteo en <strong>instagram.com</strong> desde la computadora.</li>
+          <li>Bajá hasta el final de los comentarios. Si aparece el botón <strong>+</strong> para cargar más, tocalo hasta que no quede ninguno.</li>
+          <li>Seleccioná desde el primer comentario hasta el último, copiá y pegá acá.</li>
+        </ol>
+        <p>También podés pegar una lista de usuarios, uno por línea.</p>
+      </details>
+      <label for="pegado">Pegá los comentarios</label>
+      <textarea id="pegado" rows="9" placeholder="usuario1&#10;¡Participo! @amiga&#10;2 sem&#10;Responder&#10;usuario2&#10;…" spellcheck="false"></textarea>
+      <p class="nota" id="deteccion" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title"><span>02</span> Participantes</h2>
+      <label for="participantes">Revisá la lista <small>(uno por línea, podés borrar o agregar)</small></label>
+      <textarea id="participantes" rows="9" spellcheck="false" placeholder="Acá aparecen los usuarios que comentaron"></textarea>
+
+      <label for="excluir">No participan <small>(separados por coma)</small></label>
+      <input id="excluir" value="dg.creando" spellcheck="false" autocapitalize="none">
+
+      <label class="check"><input type="checkbox" id="unico" checked><span>Una participación por persona</span></label>
+
+      <div class="numeros">
+        <div>
+          <label for="ganadores">Ganadores</label>
+          <input id="ganadores" type="number" min="1" max="20" value="1" inputmode="numeric">
+        </div>
+        <div>
+          <label for="suplentes">Suplentes</label>
+          <input id="suplentes" type="number" min="0" max="20" value="0" inputmode="numeric">
+        </div>
+      </div>
+      <p class="nota" id="conteo" aria-live="polite"></p>
+    </section>
+
+    <section class="card card-sorteo">
+      <h2 class="card-title"><span>03</span> Sorteo</h2>
+      <div class="escenario" id="escenario">
+        <span class="escenario-label" id="escenario-label">Ganador/a</span>
+        <strong class="nombre" id="nombre">—</strong>
+      </div>
+      <ol class="resultado" id="resultado" hidden></ol>
+      <p class="nota" id="detalle"></p>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="sortear" disabled>Sortear</button>
+        <button type="button" class="btn btn-ghost" id="copiar" hidden>Copiar resultado</button>
+        <button type="button" class="btn btn-ghost" id="nuevo">Nuevo sorteo</button>
+      </div>
+    </section>
+  </div>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="sorteo.js"></script>
+</body>
+</html>
