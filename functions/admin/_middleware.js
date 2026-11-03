@@ -9,8 +9,8 @@
 const ACCESOS = [
   // daianita
   { id: 'calculadora', ruta: '/admin/calculadora/', clave: '7b5330b813b7aceda3bb149ea42a60778a237da7a6717764a9cd9d65eb47b773' },
-  // CLAVE_SORTEO
-  { id: 'sorteo', ruta: '/admin/sorteo/', clave: 'HUELLA_SORTEO' }
+  // daianita2
+  { id: 'sorteo', ruta: '/admin/sorteo/', clave: 'bebd1727ab0af5daefd7bd72b460c51d609ee6733de5d91143dae11de1b68efb' }
 ];
 const DIAS = 30;
 const enc = new TextEncoder();
