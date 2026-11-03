@@ -23,17 +23,51 @@
   <div class="grid">
     <section class="card">
       <h2 class="card-title"><span>01</span> Comentarios</h2>
-      <details class="ayuda">
-        <summary>¿Cómo copio los comentarios?</summary>
-        <ol>
-          <li>Abrí el posteo en <strong>instagram.com</strong> desde la computadora.</li>
-          <li>Bajá hasta el final de los comentarios. Si aparece el botón <strong>+</strong> para cargar más, tocalo hasta que no quede ninguno.</li>
-          <li>Seleccioná desde el primer comentario hasta el último, copiá y pegá acá.</li>
-        </ol>
-        <p>También podés pegar una lista de usuarios, uno por línea.</p>
-      </details>
-      <label for="pegado">Pegá los comentarios</label>
-      <textarea id="pegado" rows="9" placeholder="usuario1&#10;¡Participo! @amiga&#10;2 sem&#10;Responder&#10;usuario2&#10;…" spellcheck="false"></textarea>
+      <div class="tabs" role="tablist" aria-label="De dónde salen los comentarios">
+        <button type="button" role="tab" id="tab-ig" aria-controls="panel-ig" aria-selected="true">Desde Instagram</button>
+        <button type="button" role="tab" id="tab-pegar" aria-controls="panel-pegar" aria-selected="false">Pegar</button>
+      </div>
+
+      <div id="panel-ig" role="tabpanel" aria-labelledby="tab-ig">
+        <div id="ig-conectar">
+          <details class="ayuda">
+            <summary>¿Cómo consigo el código?</summary>
+            <ol>
+              <li>La cuenta de Instagram tiene que ser <strong>profesional</strong> (de empresa o de creador).</li>
+              <li>Entrá a <strong>developers.facebook.com</strong>, creá una app y elegí el caso de uso de Instagram (administrar mensajes y contenido).</li>
+              <li>En la configuración de la API con inicio de sesión de Instagram, agregá la cuenta, iniciá sesión y tocá <strong>Generar token</strong>.</li>
+              <li>Copiá el código y pegalo acá. Queda guardado solo en este navegador.</li>
+            </ol>
+          </details>
+          <label for="ig-token">Código de acceso de Instagram</label>
+          <input id="ig-token" type="password" autocomplete="off" spellcheck="false" autocapitalize="none" placeholder="IGAA…">
+          <button type="button" class="btn btn-primary btn-block" id="ig-conectar-btn">Conectar</button>
+        </div>
+        <div id="ig-conectado" hidden>
+          <div class="cuenta">
+            <span>Conectado como <strong id="ig-usuario"></strong></span>
+            <button type="button" class="link" id="ig-desconectar">Desconectar</button>
+          </div>
+          <p class="sub">Elegí el posteo del sorteo</p>
+          <div class="posteos" id="ig-posteos"></div>
+          <button type="button" class="btn btn-ghost btn-block" id="ig-mas" hidden>Ver más posteos</button>
+        </div>
+        <p class="nota" id="ig-estado" aria-live="polite"></p>
+      </div>
+
+      <div id="panel-pegar" role="tabpanel" aria-labelledby="tab-pegar" hidden>
+        <details class="ayuda">
+          <summary>¿Cómo copio los comentarios?</summary>
+          <ol>
+            <li>Abrí el posteo en <strong>instagram.com</strong> desde la computadora.</li>
+            <li>Bajá hasta el final de los comentarios. Si aparece el botón <strong>+</strong> para cargar más, tocalo hasta que no quede ninguno.</li>
+            <li>Seleccioná desde el primer comentario hasta el último, copiá y pegá acá.</li>
+          </ol>
+          <p>También podés pegar una lista de usuarios, uno por línea.</p>
+        </details>
+        <label for="pegado">Pegá los comentarios</label>
+        <textarea id="pegado" rows="9" placeholder="usuario1&#10;¡Participo! @amiga&#10;2 sem&#10;Responder&#10;usuario2&#10;…" spellcheck="false"></textarea>
+      </div>
       <p class="nota" id="deteccion" aria-live="polite"></p>
     </section>
 
@@ -43,7 +77,7 @@
       <textarea id="participantes" rows="9" spellcheck="false" placeholder="Acá aparecen los usuarios que comentaron"></textarea>
 
       <label for="excluir">No participan <small>(separados por coma)</small></label>
-      <input id="excluir" value="dg.creando" spellcheck="false" autocapitalize="none">
+      <input id="excluir" value="daianaguerra.ph" spellcheck="false" autocapitalize="none">
 
       <label class="check"><input type="checkbox" id="unico" checked><span>Una participación por persona</span></label>
 

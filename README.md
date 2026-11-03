@@ -154,14 +154,27 @@ mueve de una lista a otra.
 ## Sorteos (uso interno)
 
 `/admin/sorteo/` saca ganadores al azar entre quienes comentaron un posteo.
-Instagram no deja leer los comentarios desde otra web, así que se copian a
-mano desde instagram.com y se pegan: la página detecta los usuarios, muestra
-la lista para revisarla y sortea en el navegador, sin guardar ni enviar nada.
+Los comentarios se consiguen de dos formas:
+
+- **Desde Instagram:** con un código de acceso de la API de Instagram (inicio
+  de sesión de Instagram; cuenta profesional, permisos de contenido y
+  comentarios). Se pega una vez en la página y queda guardado solo en ese
+  navegador; la página lo renueva sola si tiene más de un día (dura 60). Muestra
+  los posteos de la cuenta, se elige uno y trae comentarios y respuestas.
+  `functions/admin/sorteo/instagram.js` hace de puente con
+  `graph.instagram.com` y solo acepta esas consultas; el código no se guarda
+  en el servidor.
+- **Pegando:** se copian los comentarios desde instagram.com y la página
+  detecta los usuarios.
+
+En los dos casos se puede revisar la lista antes de sortear. El sorteo corre
+en el navegador.
 
 ```
-admin/sorteo/index.html   la página
-admin/sorteo/sorteo.js    detección de usuarios, sorteo y copiado
-admin/sorteo/sorteo.css   estilos propios
+admin/sorteo/index.html             la página
+admin/sorteo/sorteo.js              Instagram, detección, sorteo y copiado
+admin/sorteo/sorteo.css             estilos propios
+functions/admin/sorteo/instagram.js puente con la API de Instagram
 ```
 
 ## Páginas internas y contraseñas
