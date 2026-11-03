@@ -149,12 +149,31 @@ functions/admin/_middleware.js     pide la contraseña en /admin/*
 hora de cobertura y su lista de `lugares`; para cambiar un barrio de zona se
 mueve de una lista a otra.
 
-**Acceso:** pide la contraseña `daianita`. En el código está solo su huella
-SHA-256 (`CLAVE_SHA256` en `functions/admin/_middleware.js`); para cambiarla
-se reemplaza por la de la clave nueva (`printf 'clave' | sha256sum`), o se
-carga la variable `ADMIN_PASSWORD` en Cloudflare Pages, que tiene prioridad.
-Al entrar queda la sesión abierta 30 días en ese navegador; `/admin/salir` la
-cierra. Es una protección liviana: alcanza para que los clientes no entren.
+**Acceso:** ver "Páginas internas y contraseñas", abajo.
+
+## Sorteos (uso interno)
+
+`/admin/sorteo/` saca ganadores al azar entre quienes comentaron un posteo.
+Instagram no deja leer los comentarios desde otra web, así que se copian a
+mano desde instagram.com y se pegan: la página detecta los usuarios, muestra
+la lista para revisarla y sortea en el navegador, sin guardar ni enviar nada.
+
+```
+admin/sorteo/index.html   la página
+admin/sorteo/sorteo.js    detección de usuarios, sorteo y copiado
+admin/sorteo/sorteo.css   estilos propios
+```
+
+## Páginas internas y contraseñas
+
+`functions/admin/_middleware.js` pide contraseña en todo `/admin/*`. Cada
+contraseña abre una sola página: la lista `ACCESOS` dice cuál, y guarda la
+huella SHA-256 de cada clave, no el texto. Para cambiar una clave o sumar
+una página, se agrega o cambia una entrada con la huella nueva
+(`printf 'clave' | sha256sum`). `/admin/` muestra la pantalla de contraseña y
+lleva a la página de la clave que se escriba. La sesión dura 30 días por
+página; `/admin/salir` cierra todas. Es una protección liviana: alcanza para
+que los clientes no entren.
 
 ## Fotos livianas
 
